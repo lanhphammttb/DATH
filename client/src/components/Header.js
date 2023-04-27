@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
-import compare from "../assets/images/compare.svg";
-import wishlist from "../assets/images/wishlist.svg";
+// import compare from "../assets/images/compare.svg";
+// import wishlist from "../assets/images/wishlist.svg";
 import user from "../assets/images/user.svg";
 import cart from "../assets/images/cart.svg";
 import menu from "../assets/images/menu.svg";
@@ -45,8 +45,8 @@ const Header = () => {
                                 <input
                                     type="text"
                                     className="form-control py-2"
-                                    placeholder="Search Product Here..."
-                                    aria-label="Search Product Here..."
+                                    placeholder="Nhập tên sản phẩm..."
+                                    aria-label="Nhập tên sản phẩm..."
                                     aria-describedby="basic-addon2"
                                 />
                                 <span className="input-group-text p-3" id="basic-addon2">
@@ -57,7 +57,7 @@ const Header = () => {
                         <div className="col-5">
                             <div className="header-upper-links d-flex align-items-center justify-content-between">
                                 <div>
-                                    <Link
+                                    {/* <Link
                                         to="/compare-product"
                                         className="d-flex align-items-center gap-10 text-white"
                                     >
@@ -65,10 +65,10 @@ const Header = () => {
                                         <p className="mb-0">
                                             Compare <br /> Products
                                         </p>
-                                    </Link>
+                                    </Link> */}
                                 </div>
                                 <div>
-                                    <Link
+                                    {/* <Link
                                         to="/wishlist"
                                         className="d-flex align-items-center gap-10 text-white"
                                     >
@@ -76,7 +76,7 @@ const Header = () => {
                                         <p className="mb-0">
                                             Favourite <br /> wishlist
                                         </p>
-                                    </Link>
+                                    </Link> */}
                                 </div>
                                 <div>
                                     <Link
@@ -85,7 +85,7 @@ const Header = () => {
                                     >
                                         <img src={user} alt="user" />
                                         <p className="mb-0">
-                                            Log in <br /> My Account
+                                            Đăng nhập <br /> tài khoản của tôi
                                         </p>
                                     </Link>
                                 </div>
@@ -122,7 +122,7 @@ const Header = () => {
                                         >
                                             <img src={menu} alt="" />
                                             <span className="me-5 d-inline-block">
-                                                Shop Categories
+                                                Danh mục cửa hàng
                                             </span>
                                         </button>
                                         <ul

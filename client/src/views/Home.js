@@ -6,7 +6,22 @@ import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
 import { services } from "../ultils/Data";
-
+import camera from "../assets/images/camera.jpg";
+import mainbanner from "../assets/images/main-banner-1.jpg";
+import mainbanner2 from "../assets/images/main-banner.jpg";
+import mainbanner3 from "../assets/images/main-banner-1.jpg";
+import famous from "../assets/images/famous-1.webp";
+import famous2 from "../assets/images/famous-2.webp";
+import famous3 from "../assets/images/famous-3.webp";
+import famous4 from "../assets/images/famous-4.webp";
+import brand from "../assets/images/brand-01.png";
+import brand2 from "../assets/images/brand-02.png";
+import brand3 from "../assets/images/brand-03.png";
+import brand4 from "../assets/images/brand-04.png";
+import brand5 from "../assets/images/brand-05.png";
+import brand6 from "../assets/images/brand-06.png";
+import brand7 from "../assets/images/brand-07.png";
+import brand8 from "../assets/images/brand-08.png";
 const Home = () => {
   return (
     <>
@@ -15,7 +30,7 @@ const Home = () => {
           <div className="col-6">
             <div className="main-banner position-relative ">
               <img
-                src="../assets/images/main-banner-1.jpg"
+                src={mainbanner}
                 className="img-fluid rounded-3"
                 alt="main banner"
               />
@@ -31,7 +46,7 @@ const Home = () => {
             <div className="d-flex flex-wrap gap-10 justify-content-between align-items-center">
               <div className="small-banner position-relative">
                 <img
-                  src="../assets/images/catbanner-01.jpg"
+                  src={mainbanner}
                   className="img-fluid rounded-3"
                   alt="main banner"
                 />
@@ -45,7 +60,7 @@ const Home = () => {
               </div>
               <div className="small-banner position-relative">
                 <img
-                  src="../assets/images/catbanner-02.jpg"
+                  src={mainbanner2}
                   className="img-fluid rounded-3"
                   alt="main banner"
                 />
@@ -59,7 +74,7 @@ const Home = () => {
               </div>
               <div className="small-banner position-relative ">
                 <img
-                  src="../assets/images/catbanner-03.jpg"
+                  src={mainbanner3}
                   className="img-fluid rounded-3"
                   alt="main banner"
                 />
@@ -73,7 +88,7 @@ const Home = () => {
               </div>
               <div className="small-banner position-relative ">
                 <img
-                  src="../assets/images/catbanner-04.jpg"
+                  src={mainbanner2}
                   className="img-fluid rounded-3"
                   alt="main banner"
                 />
@@ -117,56 +132,56 @@ const Home = () => {
                   <h6>Music & Gaming</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/camera.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
               <div className="d-flex gap align-items-center">
                 <div>
                   <h6>Cameras</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/camera.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
               <div className="d-flex gap align-items-center">
                 <div>
                   <h6>Smart Tv</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/tv.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
               <div className="d-flex gap align-items-center">
                 <div>
                   <h6>Smart Watches</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/headphone.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
               <div className="d-flex gap align-items-center">
                 <div>
                   <h6>Music & Gaming</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/camera.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
               <div className="d-flex gap align-items-center">
                 <div>
                   <h6>Cameras</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/camera.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
               <div className="d-flex gap align-items-center">
                 <div>
                   <h6>Smart Tv</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/tv.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
               <div className="d-flex gap align-items-center">
                 <div>
                   <h6>Smart Watches</h6>
                   <p>10 Items</p>
                 </div>
-                <img src="../assets/images/headphone.jpg" alt="camera" />
+                <img src={camera} alt="camera" />
               </div>
             </div>
           </div>
@@ -189,7 +204,7 @@ const Home = () => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="../assets/images/famous-1.webp"
+                src={famous}
                 className="img-fluid"
                 alt="famous"
               />
@@ -203,7 +218,7 @@ const Home = () => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="../assets/images/famous-2.webp"
+                src={famous2}
                 className="img-fluid"
                 alt="famous"
               />
@@ -217,7 +232,7 @@ const Home = () => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="../assets/images/famous-3.webp"
+                src={famous3}
                 className="img-fluid"
                 alt="famous"
               />
@@ -233,7 +248,7 @@ const Home = () => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="../assets/images/famous-3.webp"
+                src={famous4}
                 className="img-fluid"
                 alt="famous"
               />
@@ -265,7 +280,7 @@ const Home = () => {
       <Container class1="popular-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
-            <h3 className="section-heading">Our Popular Products</h3>
+            <h3 className="section-heading">Sản phẩm phổ biến</h3>
           </div>
         </div>
         <div className="row">
@@ -281,28 +296,28 @@ const Home = () => {
             <div className="marquee-inner-wrapper card-wrapper">
               <Marquee className="d-flex">
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-01.png" alt="brand" />
+                  <img src={brand} alt="brand" />
                 </div>
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-02.png" alt="brand" />
+                  <img src={brand2} alt="brand" />
                 </div>
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-03.png" alt="brand" />
+                  <img src={brand3} alt="brand" />
                 </div>
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-04.png" alt="brand" />
+                  <img src={brand4} alt="brand" />
                 </div>
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-05.png" alt="brand" />
+                  <img src={brand5} alt="brand" />
                 </div>
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-06.png" alt="brand" />
+                  <img src={brand6} alt="brand" />
                 </div>
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-07.png" alt="brand" />
+                  <img src={brand7} alt="brand" />
                 </div>
                 <div className="mx-4 w-25">
-                  <img src="../assets/images/brand-08.png" alt="brand" />
+                  <img src={brand8} alt="brand" />
                 </div>
               </Marquee>
             </div>
@@ -313,7 +328,7 @@ const Home = () => {
       <Container class1="blog-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
-            <h3 className="section-heading">Our Latest Blogs</h3>
+            <h3 className="section-heading">Blogs mới nhất</h3>
           </div>
         </div>
         <div className="row">

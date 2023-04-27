@@ -1,6 +1,7 @@
 import React from "react";
 import ReactStars from "react-rating-stars-component";
 import { Link } from "react-router-dom";
+import watch from "../assets/images/watch.jpg";
 const SpecialProduct = () => {
   return (
     <>
@@ -8,12 +9,12 @@ const SpecialProduct = () => {
         <div className="special-product-card">
           <div className="d-flex justify-content-between">
             <div>
-              <img src="../assets/images/watch.jpg" className="img-fluid" alt="watch" />
+              <img src={watch}className="img-fluid" alt="watch" />
             </div>
             <div className="special-product-content">
               <h5 className="brand">Havels</h5>
               <h6 className="title">
-                Samsung Galaxy Note10+ Mobile Phone; Sim...
+                Tai nghe B&O Beoplay H95 chính hãng
               </h6>
               <ReactStars
                 count={5}

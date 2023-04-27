@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import blog from "../assets/images/blog-1.jpg";
 const BlogCard = () => {
   return (
     <div className="blog-card">
       <div className="card-image">
-        <img src="../assets/images/blog-1.jpg" className="img-fluid w-100" alt="blog" />
+        <img src={blog} className="img-fluid w-100" alt="blog" />
       </div>
       <div className="blog-content">
         <p className="date">1 Dec, 2022</p>
@@ -15,7 +15,7 @@ const BlogCard = () => {
           accusamus officia
         </p>
         <Link to="/blog/:id" className="button">
-          Read More
+          Đọc thêm
         </Link>
       </div>
     </div>
