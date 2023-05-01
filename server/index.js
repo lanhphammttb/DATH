@@ -1,9 +1,12 @@
 const express = require("express");
-const app = express();
-const cors = require('cors');
 var mysql = require('mysql');
+const cors = require('cors');
 
-let connection = mysql.createConnection({
+const app = express();
+
+app.use(cors());
+
+const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     port: '3306',  /* port on which phpmyadmin run */
@@ -11,43 +14,34 @@ let connection = mysql.createConnection({
     database: 'dath'  
 });
 
-connection.connect(function(err) {
-    if (err) {
-      return console.error('error: ' + err.message);
-    }
+connection.connect((err) => {
+  if (err) throw err;
+  console.log('Connected to MySQL database!');
+});
 
-    console.log('Connected to the MySQL server.');
+app.get('/api/sanpham', (req, res) => {
+  const sql = 'SELECT * FROM SanPham';
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
   });
+});
+
+app.get('/api/anhsanpham/1', (req, res) => {
+  const masp = req.params.MaSP;
+  const sql = `SELECT * FROM AnhSanPham Where MaSP= ${1}`;
+
+  connection.query(sql, (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
 
 
 
+const port = process.env.PORT || 8000;
 
-// const express = require("express");
-// const app = express();
-// const cors = require('cors');
-
-// app.use(cors({
-//     origin:'*'
-// }));
-// const mongoose = require("mongoose");
-
-// // app.use(express.json());
-// const uri = "mongodb+srv://boyubqn3:huce123@pkdt.zygktca.mongodb.net/?retryWrites=true&w=majority";
-
-// async function connect() {
-//     try {
-//         await mongoose.connect(uri);
-//         console.log("Connected to MongoDB");
-//     } catch (error) {
-//         console.error(error);
-//     }
-// }
-
-// connect();
-
-// const post_route = require('./routes/postRoute');
-// app.use('/api',post_route);
-
-// app.listen(8000, () => {
-//     console.log("Server started on port 8000");
-// });
+app.listen(port, () => {
+  console.log(`Server started on port ${port}`);
+});

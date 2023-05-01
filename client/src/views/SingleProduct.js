@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import ReactStars from "react-rating-stars-component";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
@@ -11,6 +12,20 @@ import { Link } from "react-router-dom";
 import watch from "../assets/images/watch.jpg";
 import Container from "../components/Container";
 const SingleProduct = () => {
+
+  const [product, setProduct] = useState(null);
+  const [orderedProduct, setorderedProduct] = useState(true);  
+  console.log(product);
+
+  useEffect(() => {
+    axios.get(`http://localhost:8000/api/anhsanpham/1`)
+      .then(response => setProduct(response.data))
+      .catch(error => console.error(error));
+  }, [1]);
+
+  if (!product) {
+    return <div>Loading...</div>;
+  }
   const props = {
     width: 594,
     height: 600,
@@ -19,7 +34,6 @@ const SingleProduct = () => {
     img: "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg",
   };
 
-  const [orderedProduct, setorderedProduct] = useState(true);
   const copyToClipboard = (text) => {
     console.log("text", text);
     var textField = document.createElement("textarea");
@@ -43,34 +57,15 @@ const SingleProduct = () => {
               </div>
             </div>
             <div className="other-product-images d-flex flex-wrap gap-15">
+            {product.map(image => (
               <div>
                 <img
-                  src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
+                  src={`${image.FileName}`}
                   className="img-fluid"
                   alt=""
                 />
               </div>
-              <div>
-                <img
-                  src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
+            ))}
             </div>
           </div>
           <div className="col-6">
