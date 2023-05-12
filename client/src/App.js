@@ -21,6 +21,9 @@ import TermAndContions from "./views/TermAndContions";
 import SingleProduct from "./views/SingleProduct";
 import Cart from "./views/Cart";
 import Checkout from "./views/Checkout";
+import ListProduct from "./components/Admin/ListProduct";
+import LayoutAdmin from "./components/Admin/LayoutAdmin";
+import CreatProduct from "./components/Admin/CreateProduct";
 function App() {
   return (
     <>
@@ -46,6 +49,15 @@ function App() {
             <Route path="refund-policy" element={<RefundPloicy />} />
             <Route path="shipping-policy" element={<ShippingPolicy />} />
             <Route path="term-conditions" element={<TermAndContions />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/admin" element={<LayoutAdmin />}>
+          <Route index element={<ListProduct />} />            
+          <Route path="list-product" element={<ListProduct />} />
+          <Route path="create-product" element={<CreatProduct />} />
           </Route>
         </Routes>
       </BrowserRouter>

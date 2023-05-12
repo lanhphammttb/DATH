@@ -17,9 +17,11 @@ const Login = () => {
       .post('http://localhost:8000/login', { username, password })
       .then((response) => {
         const token = response.data.token;
+        const user = response.data;
         localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        window.location.href = '/product'; // Chuyển hướng sang trang dashboard sau khi đăng nhập thành công
+        window.location.href = '/admin'; // Chuyển hướng sang trang dashboard sau khi đăng nhập thành công
       })
       .catch((error) => {
         console.error(error);
