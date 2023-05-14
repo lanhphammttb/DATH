@@ -1,4 +1,4 @@
-import Sidebar from "../../components/Admin/Sidebar";
+import Sidebar from "../Siderbar/Sidebar";
 import React, { useEffect, useRef } from 'react';
 import { Outlet } from "react-router-dom";
 const Admin = (props) => {
@@ -35,14 +35,14 @@ const Admin = (props) => {
                     <div class="navbar-search-block">
                     <form class="form-inline">
                         <div class="input-group input-group-sm">
-                        {/* <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search"> */}
+                        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search"></input>
                         <div class="input-group-append">
                             <button class="btn btn-navbar" type="submit">
                             <i class="fas fa-search"></i>
                             </button>
-                            <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                            {/* <button class="btn btn-navbar" type="button" data-widget="navbar-search">
                             <i class="fas fa-times"></i>
-                            </button>
+                            </button> */}
                         </div>
                         </div>
                     </form>

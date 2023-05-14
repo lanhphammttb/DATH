@@ -2,10 +2,8 @@ import { Link} from "react-router-dom";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 
 
 const Login = () => {
@@ -27,6 +25,18 @@ const Login = () => {
         console.error(error);
       });
   };
+
+  const pushMenuRef = useRef(null);
+
+  const isVisible = (e) => {
+    e.preventDefault();
+    let a = document.getElementById("password");
+    let b = document.getElementById("icon");
+    a.type === "password" ? a.type = "text" : a.type = "password";
+    a.type === "password" ? b.classList.add('fa-eye')&&b.classList.remove('fa-eye-slash') : b.classList.add('fa-eye-slash')&&b.classList.remove('fa-eye');
+    };
+
+
   return (
     <>
       <Meta title={"Login"} />
@@ -47,11 +57,7 @@ const Login = () => {
                     className=" form-control input"
                     id="password"
                   />
-                  <FontAwesomeIcon style={{ paddingRight: "1rem", cursor: "pointer" }} className="align-self-center" onClick={(e) => {
-                    e.preventDefault();
-                    let a = document.getElementById("password");
-                    a.type === "password" ? a.type = "text" : a.type = "password";
-                  }} icon={faEyeSlash} />
+                  <i id="icon" className="align-self-center fas fa-eye-slash" onClick={(e) => isVisible(e)}></i>
                 </div>
                 <div>
                   <Link to="/forgot-password">Forgot Password?</Link>

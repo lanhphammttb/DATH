@@ -16,14 +16,14 @@ const Header = () => {
                             <div class="flex-col hide-for-medium flex-left">
                                 <ul class="nav nav-left medium-nav-center nav-small  nav-divided">
                                     <li class="html custom html_topbar_left">
-                                        <p className="text-end text-white mb-0"><i class="fa fa-map-marker"></i>Địa chỉ: 55 Giải Phóng, Hai Bà Trưng, Hà Nội</p>
+                                        <p className="text-end text-white mb-0"><i class="fa fa-map-marker mr-2"></i>Địa chỉ: 55 Giải Phóng, Hai Bà Trưng, Hà Nội</p>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         <div className="col-6">
                             <p className="text-end text-white mb-0">
-                                <i class="fa fa-phone"></i>Hotline:
+                                <i class="fa fa-phone mr-2"></i>Hotline:
                                 <a className="text-white" href="tel:+91 8264954234">
                                     +91 8264954234
                                 </a>

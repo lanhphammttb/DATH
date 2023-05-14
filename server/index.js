@@ -54,8 +54,9 @@ app.post('/login', (req, res) => {
         res.status(401).json({ error: 'Invalid username or password' });
       } else {
         const user = results[0];
+        const name = results[0].name;
         const token = jwt.sign({ id: user.id, username: user.username }, secretKey);
-        res.status(200).json({ token });
+        res.status(200).json({ token, name});
       }
     }
   );
@@ -86,10 +87,20 @@ const upload = multer({
 });
 
 //xử lý POST request để tải ảnh lên file ảnh và lưu trữ vào MYSQL
+const fs = require('fs');
+// app.post('/api/sanpham', upload.single('file'), (req, res)=>{
 app.post('/api/sanpham', upload.single('file'), (req, res)=>{
   const {masp, tensp, soluong, gianhap, giaban, maloaisp, nsx, mota} = req.body;
-  const file = req.file;
-  connection.query('INSERT INTO sanpham SET ?', { masp: masp, SoLuong: soluong, GiaNhap: gianhap, GiaBan: giaban, MaLoaiSP: maloaisp, NSX: nsx, MoTa: mota, Image: file,  TenSP: tensp}, (error, results) => {
+  // const image = req.file.buffer;
+  // var img = fs.readFileSync(req.file.path);
+  // var encode_image = img.toString('base64');
+  // var finalImg = {
+  //   contentType: req.file.mimetype,
+  //   image:  Buffer.from(encode_image, 'base64')
+  // };
+  // console.log(JSON.stringify(req.body));
+  const finalImg = req.body.file;
+  connection.query('INSERT INTO sanpham SET ?', { masp: masp, SoLuong: soluong, GiaNhap: gianhap, GiaBan: giaban, MaLoaiSP: maloaisp, NSX: nsx, MoTa: mota, Image: finalImg,  TenSP: tensp}, (error, results) => {
     if (error) {
       console.error('MySQL error:', error);
       res.sendStatus(500);
@@ -100,18 +111,25 @@ app.post('/api/sanpham', upload.single('file'), (req, res)=>{
   });
 });
 
-app.get('/api/sanpham', (req, res) => {1
-  const sql = 'SELECT * FROM SanPham';
-
-  connection.query(sql, (err, result) => {
-    if (err) throw err;
-    res.send(result);
+app.get('/api/sanpham', (req, res) => {
+  const sql = 'SELECT * FROM sanpham';
+  connection.query(sql, (error, results, fields) => {
+    if (error) throw error;
+    
+    const updatedResults = results.map((result) => {
+      // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+      // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+      imageUrl = Buffer.from(result.Image,'base64').toString('binary');
+      return { ...result, imageUrl };
+    });
+    console.log(results); 
+    res.json(updatedResults);
   });
 });
 
 app.get('/api/sanpham/:id', (req, res) => {
   const id = req.params.id;
-  const sql = `SELECT * FROM sanpham WHERE masp = ${id}`;
+  const sql = `SELECT Image FROM sanpham WHERE masp = ${id}`;
 
   connection.query(sql, (err, result) => {
     if (err) {
@@ -119,21 +137,22 @@ app.get('/api/sanpham/:id', (req, res) => {
     } else if (result.length === 0) {
       res.status(404).json({ error: 'User not found' });
     } else {
-      res.send(result[0].Image);
+      res.contentType('image/jpeg')
+      res.send(result[0].Image.Buffer);
       // res.json(result[0].Image);
     }
   });
 });
 
-app.get('/api/anhsanpham/1', (req, res) => {
-  const masp = req.params.MaSP;
-  const sql = `SELECT * FROM AnhSanPham Where MaSP= ${1}`;
+// app.get('/api/anhsanpham/1', (req, res) => {
+//   const masp = req.params.MaSP;
+//   const sql = `SELECT * FROM AnhSanPham Where MaSP= ${1}`;
 
-  connection.query(sql, (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
-});
+//   connection.query(sql, (err, result) => {
+//     if (err) throw err;
+//     res.send(result);
+//   });
+// });
 
 
 

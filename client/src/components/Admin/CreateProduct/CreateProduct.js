@@ -1,9 +1,11 @@
 import Form from 'react-bootstrap/Form';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-
+import './CreateProduct.scss';
+import CommonUtils from '../../../ultils/CommonUtils';
 const CreatProduct = (props) =>{
-
     const [masp,setMaSP] = useState("");
     const [tensp,setTenSP] = useState("");
     const [soluong,setSoLuong] = useState("");
@@ -47,9 +49,29 @@ const CreatProduct = (props) =>{
     const setmota = (e)=>{
         setMoTa(e.target.value)
     }
+    
+    const imageRef = useRef(null);
+    const setimgfile = async(e) => {
+        var fileImage = e.target.files[0];
+        var base64 = await CommonUtils.getBase64(fileImage);
+        var imageElement = document.createElement('img');
 
-    const setimgfile = (e)=>{
-        setFile(e.target.files[0])
+
+        console.log(base64);
+        if(!fileImage.name) {
+            return
+        }
+
+        if(!['.jpg', '.png', '.jpeg'].some(ext => fileImage.name.toLowerCase().includes(ext)))
+        {
+            toast.error('Hình ảnh phải thuộc dạng jpeg');
+            return
+        }
+        console.log(fileImage);
+        imageElement.src = URL.createObjectURL(fileImage);
+        imageRef.current.appendChild(imageElement);   
+        
+        setFile(base64);
     }
 
     const addData = async(e)=>{
@@ -84,59 +106,68 @@ const CreatProduct = (props) =>{
 
     return (
         <>
-            <div className='container mt-3'>
-                <h1>Upload Your Img Here</h1>
+            <div className='container'>
 
-                <Form>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form className='row'>
+                <Form.Group className="col-md-6">
+                    <Form.Group className="mb-1">
                         <Form.Label>Mã sản phẩm</Form.Label>
                         <Form.Control type="text" name='masp' onChange={setmasp} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-1">
                         <Form.Label>Tên sản phẩm</Form.Label>
                         <Form.Control type="text" name='tensp' onChange={settensp} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-1">
                         <Form.Label>Số lượng</Form.Label>
                         <Form.Control type="text" name='soluong' onChange={setsoluong} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-1">
                         <Form.Label>Giá nhập</Form.Label>
                         <Form.Control type="text" name='gianhap' onChange={setgianhap} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-1">
                         <Form.Label>Giá bán</Form.Label>
                         <Form.Control type="text" name='giaban' onChange={setgiaban} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-1">
                         <Form.Label>Mã loại sản phẩm</Form.Label>
                         <Form.Control type="text" name='maloaisp' onChange={setmaloaisp} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-1">
                         <Form.Label>NSX</Form.Label>
                         <Form.Control type="text" name='nsx' onChange={setnsx} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-1">
                         <Form.Label>Mô tả</Form.Label>
                         <Form.Control type="text" name='mota' onChange={setmota} />
                     </Form.Group>
+                </Form.Group>                    
 
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Label>Select Your Image</Form.Label>
-                        <Form.Control type="file" name='file' onChange={setimgfile} />
+                <Form.Group className="col-md-6">
+                    <Form.Group className="mb-1">
+                        <Form.Label htmlFor ="mypicture" className='preview'  ref={imageRef}>
+                            <i className="fas fa-cloud-upload"></i>
+                            <span>
+                                Select Your Image
+                            </span>
+                        </Form.Label>
+                        <Form.Control type="file" name='file' onChange={(e) => setimgfile(e)} hidden id="mypicture"/>
                     </Form.Group>
-                    <button variant="primary" type="submit" onClick={addData}>
+                    <button className='btn btn-primary' variant="primary" type="submit" onClick={addData}>
                         Submit
-                    </button>
-                </Form>
-            </div>
+                    </button>    
+        
+                </Form.Group>
+                </Form>   
+            </div>             
         </>
     )
 }

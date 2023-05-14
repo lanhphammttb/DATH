@@ -1,4 +1,6 @@
 import React from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
@@ -21,9 +23,9 @@ import TermAndContions from "./views/TermAndContions";
 import SingleProduct from "./views/SingleProduct";
 import Cart from "./views/Cart";
 import Checkout from "./views/Checkout";
-import ListProduct from "./components/Admin/ListProduct";
-import LayoutAdmin from "./components/Admin/LayoutAdmin";
-import CreatProduct from "./components/Admin/CreateProduct";
+import ListProduct from "./components/Admin/ListProduct/ListProduct";
+import LayoutAdmin from "./components/Admin/LayoutAdmin/LayoutAdmin";
+import CreatProduct from "./components/Admin/CreateProduct/CreateProduct";
 function App() {
   return (
     <>
@@ -61,6 +63,20 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        {/* Same as */}
+        <ToastContainer />
     </>
   );
 }

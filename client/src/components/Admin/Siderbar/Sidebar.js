@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import "../../styles/adminlte.min.css";
+import "../../../styles/adminlte.min.css";
+import "./Siderbar.scss";
 
 const Sidebar = (props) => {
 
