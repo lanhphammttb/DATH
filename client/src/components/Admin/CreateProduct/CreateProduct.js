@@ -98,6 +98,7 @@ const CreatProduct = (props) =>{
        
         if(res.data.status == 201){
             console.log("success")
+            toast.success('Thêm sản phẩm thành công')
             // history("/")
         }else{
             console.log("error")
