@@ -26,6 +26,7 @@ import Checkout from "./views/Checkout";
 import ListProduct from "./components/Admin/ListProduct/ListProduct";
 import LayoutAdmin from "./components/Admin/LayoutAdmin/LayoutAdmin";
 import CreatProduct from "./components/Admin/CreateProduct/CreateProduct";
+import ListBill from "./components/Admin/ListBill/ListBill";
 function App() {
   return (
     <>
@@ -57,26 +58,28 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/admin" element={<LayoutAdmin />}>
-          <Route index element={<ListProduct />} />            
-          <Route path="list-product" element={<ListProduct />} />
-          <Route path="create-product" element={<CreatProduct />} />
+            <Route index element={<ListProduct />} />
+            <Route path="list-product" element={<ListProduct />} />
+            <Route path="create-product" element={<CreatProduct />} />
+            <Route path="list-bill" element={<ListBill />} />
+            <Route path="create-bill" element={<CreateBill />} />
           </Route>
         </Routes>
       </BrowserRouter>
       <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-        {/* Same as */}
-        <ToastContainer />
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      {/* Same as */}
+      <ToastContainer />
     </>
   );
 }

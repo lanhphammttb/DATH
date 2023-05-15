@@ -3,7 +3,7 @@ var mysql = require('mysql2');
 const cors = require('cors');
 const multer = require("multer");
 const moment = require("moment");
-
+const { format } = require('date-fns');
 const app = express();
 
 app.use(cors());
@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
   user: 'root',
   port: '3306',  /* port on which phpmyadmin run */
   password: '',
-  database: 'test'  
+  database: 'test'
 });
 
 connection.connect((err) => {
@@ -56,7 +56,7 @@ app.post('/login', (req, res) => {
         const user = results[0];
         const name = results[0].name;
         const token = jwt.sign({ id: user.id, username: user.username }, secretKey);
-        res.status(200).json({ token, name});
+        res.status(200).json({ token, name });
       }
     }
   );
@@ -64,33 +64,33 @@ app.post('/login', (req, res) => {
 
 //khởi tạo middleware multer
 const storage = multer.diskStorage({
-  destination: function (req, file, callback){
+  destination: function (req, file, callback) {
     callback(null, './uploads')
   },
-  filename: function (req, file, callback){
+  filename: function (req, file, callback) {
     callback(null, `image-${Date.now()}.${file.originalname}`)
   }
 });
 
 // img filter
-const isImage = (req,file,callback)=>{
-  if(file.mimetype.startsWith("image")){
-      callback(null,true)
-  }else{
-      callback(null,Error("only image is allowd"))
+const isImage = (req, file, callback) => {
+  if (file.mimetype.startsWith("image")) {
+    callback(null, true)
+  } else {
+    callback(null, Error("only image is allowd"))
   }
 }
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
-  fileFilter:isImage
+  fileFilter: isImage
 });
 
 //xử lý POST request để tải ảnh lên file ảnh và lưu trữ vào MYSQL
 const fs = require('fs');
 // app.post('/api/sanpham', upload.single('file'), (req, res)=>{
-app.post('/api/sanpham', upload.single('file'), (req, res)=>{
-  const {masp, tensp, soluong, gianhap, giaban, maloaisp, nsx, mota} = req.body;
+app.post('/api/sanpham', upload.single('file'), (req, res) => {
+  const { masp, tensp, soluong, gianhap, giaban, maloaisp, nsx, mota } = req.body;
   // const image = req.file.buffer;
   // var img = fs.readFileSync(req.file.path);
   // var encode_image = img.toString('base64');
@@ -100,7 +100,7 @@ app.post('/api/sanpham', upload.single('file'), (req, res)=>{
   // };
   // console.log(JSON.stringify(req.body));
   const finalImg = req.body.file;
-  connection.query('INSERT INTO sanpham SET ?', { masp: masp, SoLuong: soluong, GiaNhap: gianhap, GiaBan: giaban, MaLoaiSP: maloaisp, NSX: nsx, MoTa: mota, Image: finalImg,  TenSP: tensp}, (error, results) => {
+  connection.query('INSERT INTO sanpham SET ?', { masp: masp, SoLuong: soluong, GiaNhap: gianhap, GiaBan: giaban, MaLoaiSP: maloaisp, NSX: nsx, MoTa: mota, Image: finalImg, TenSP: tensp }, (error, results) => {
     if (error) {
       console.error('MySQL error:', error);
       res.sendStatus(500);
@@ -115,14 +115,14 @@ app.get('/api/sanpham', (req, res) => {
   const sql = 'SELECT * FROM sanpham';
   connection.query(sql, (error, results, fields) => {
     if (error) throw error;
-    
+
     const updatedResults = results.map((result) => {
       // Chuyển đổi dữ liệu buffer thành URL hình ảnh
       // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
-      imageUrl = Buffer.from(result.Image,'base64').toString('binary');
+      imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
       return { ...result, imageUrl };
     });
-    console.log(results); 
+    // console.log(results);
     res.json(updatedResults);
   });
 });
@@ -143,6 +143,38 @@ app.get('/api/sanpham/:id', (req, res) => {
     }
   });
 });
+
+app.get('/api/hoadon', (req, res) => {
+  const sql = 'SELECT * FROM hoadon';
+  connection.query(sql, (error, results, fields) => {
+    if (error) {
+      res.status(500).json({ error: err });
+    } else {
+      const updatedResults = results.map((result) => {
+        const formattedDateTime = format(new Date(result.NgayLapHD), 'dd/MM/yyyy HH:mm:ss');
+        return { ...result, formattedDateTime };
+      });
+      res.status(200).json(updatedResults);
+    }
+  })
+
+});
+
+app.post('/api/hoadon', (req, res) => {
+  const { mahd, makh, ngaylaphd, khuyenmai, tongtien, ghichu } = req.body;
+
+  const finalImg = req.body.file;
+  connection.query('INSERT INTO hoadon SET ?', { MaHD: mahd, MaKH: makh, NgayLapHD: ngaylaphd, KhuyenMai: khuyenmai, TongTien: tongtien, GhiChu: ghichu }, (error, results) => {
+    if (error) {
+      console.error('MySQL error:', error);
+      res.sendStatus(500);
+    } else {
+      console.log('MySQL success:', results);
+      res.sendStatus(200);
+    }
+  });
+});
+
 
 // app.get('/api/anhsanpham/1', (req, res) => {
 //   const masp = req.params.MaSP;
