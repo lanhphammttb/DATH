@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ListBill.scss';
+import './Bill.scss';
 
 const ListBill = (props) => {
     const [data, setData] = useState([]);
@@ -23,11 +23,11 @@ const ListBill = (props) => {
 
     return (
         <div className='container'>
-            <div className='mb-3'>
+            {/* <div className='mb-3'>
                 <button class="btn btn-navbar" type="button" onClick={(e) => handleAddProduct(e)}>
                     <i class="fas fa-plus"></i>Thêm hoá đơn
                 </button>
-            </div>
+            </div> */}
             <div id="list-bill" >
                 <table className="table table-striped">
                     <thead>
@@ -38,6 +38,7 @@ const ListBill = (props) => {
                             <th>Khuyến mãi</th>
                             <th>Tổng tiền</th>
                             <th>Ghi chú</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,6 +50,7 @@ const ListBill = (props) => {
                                 <td>{item.KhuyenMai}</td>
                                 <td>{item.TongTien}</td>
                                 <td>{item.GhiChu}</td>
+                                <td className='check'><button className='btn'>Check <i class="fas fa-check"></i></button></td>
                             </tr>
                         ))}
                     </tbody>

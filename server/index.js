@@ -85,7 +85,21 @@ const upload = multer({
   storage: storage,
   fileFilter: isImage
 });
+app.get('/api/sanpham', (req, res) => {
+  const sql = 'SELECT * FROM sanpham';
+  connection.query(sql, (error, results, fields) => {
+    if (error) throw error;
 
+    const updatedResults = results.map((result) => {
+      // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+      // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+      imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+      return { ...result, imageUrl };
+    });
+    // console.log(results);
+    res.json(updatedResults);
+  });
+});
 //xử lý POST request để tải ảnh lên file ảnh và lưu trữ vào MYSQL
 const fs = require('fs');
 // app.post('/api/sanpham', upload.single('file'), (req, res)=>{
@@ -111,20 +125,36 @@ app.post('/api/sanpham', upload.single('file'), (req, res) => {
   });
 });
 
-app.get('/api/sanpham', (req, res) => {
-  const sql = 'SELECT * FROM sanpham';
-  connection.query(sql, (error, results, fields) => {
-    if (error) throw error;
+app.put('/api/sanpham/:id', async (req, res) => {
+  const productId = req.params.id;
+  const { tensp, soluong, gianhap, giaban, maloaisp, nsx, mota } = req.body;
+  const finalImg = req.body.file;
+  // Kiểm tra tính hợp lệ của dữ liệu sản phẩm
+  // ...
 
-    const updatedResults = results.map((result) => {
-      // Chuyển đổi dữ liệu buffer thành URL hình ảnh
-      // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
-      imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
-      return { ...result, imageUrl };
-    });
-    // console.log(results);
-    res.json(updatedResults);
+  try {
+    // Cập nhật thông tin sản phẩm trong CSDL
+    const [rows] = await connection.execute(
+      'UPDATE sanpham SET TenSP=? SoLuong=? GiaNhap=? GiaBan=? MaLoaiSP=? NSX=? MoTa=? Image=?,  WHERE MaSP=?',
+      [tensp, soluong, gianhap, giaban, maloaisp, nsx, mota, finalImg, productId]
+    );
+    
+    console.log('up')
+    res.json(updatedProduct[0]);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(`Error updating product: ${error.message}`);
+  }
+});
+
+app.delete('/api/sanpham/:id', (req, res) => {
+  const MaSP = req.params.id;
+  connection.query('DELETE FROM sanpham WHERE MaSP = ?', [MaSP], (error, results, fields) => {
+    if (error) throw error;
+    console.log('Product deleted successfully.');
   });
+  res.send({ message: `Sản phẩm ${MaSP} đã được xóa` });
 });
 
 app.get('/api/sanpham/:id', (req, res) => {

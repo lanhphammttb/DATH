@@ -23,10 +23,11 @@ import TermAndContions from "./views/TermAndContions";
 import SingleProduct from "./views/SingleProduct";
 import Cart from "./views/Cart";
 import Checkout from "./views/Checkout";
-import ListProduct from "./components/Admin/ListProduct/ListProduct";
+import ListProduct from "./components/Admin/Product/ListProduct";
 import LayoutAdmin from "./components/Admin/LayoutAdmin/LayoutAdmin";
-import CreatProduct from "./components/Admin/CreateProduct/CreateProduct";
-import ListBill from "./components/Admin/ListBill/ListBill";
+import CreateProduct from "./components/Admin/Product/CreateProduct";
+import ListBill from "./components/Admin/Bill/ListBill";
+import CreateBill from "./components/Admin/Bill/CreateBill";
 function App() {
   return (
     <>
@@ -60,7 +61,7 @@ function App() {
           <Route path="/admin" element={<LayoutAdmin />}>
             <Route index element={<ListProduct />} />
             <Route path="list-product" element={<ListProduct />} />
-            <Route path="create-product" element={<CreatProduct />} />
+            <Route path="create-product" element={<CreateProduct />} />
             <Route path="list-bill" element={<ListBill />} />
             <Route path="create-bill" element={<CreateBill />} />
           </Route>
