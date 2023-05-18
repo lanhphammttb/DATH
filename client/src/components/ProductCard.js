@@ -7,12 +7,14 @@ import wish from "../assets/images/wish.svg";
 import wishlist from "../assets/images/wishlist.svg";
 import watch from "../assets/images/watch.jpg";
 import watch2 from "../assets/images/watch-1.avif";
+import iconcart from "../assets/images/icon-cart.png"
 import addcart from "../assets/images/add-cart.svg";
 import view from "../assets/images/view.svg";
 const ProductCard = (props) => {
   const { grid } = props;
   let location = useLocation();
   const [data, setData] = useState([]);
+  const [id, setId] = useState('');
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/sanpham')
@@ -27,14 +29,13 @@ const ProductCard = (props) => {
             <div
               className={` ${location.pathname == "/product" ? `gr-${grid}` : "col-3"
                 } `}
-            >
+            >  
               <Link
-                to={`${location.pathname == "/"
-                  ? "/product/:id"
-                  : location.pathname == "/product/:id"
-                    ? "/product/:id"
-                    : ":id"
-                  }`}
+                to={
+                  location.pathname === "/product"
+                    ? `/product/${item.MaSP}`
+                    : `/${item.MaSP}`
+                }
                 className="product-card position-relative"
               >
                 <div className="wishlist-icon position-absolute">
@@ -43,8 +44,8 @@ const ProductCard = (props) => {
                   </button>
                 </div>
                 <div className="product-image">
-                  <img src={watch} className="img-fluid" alt="product image" />
-                  <img src={watch2} className="img-fluid" alt="product image" />
+                  <img src={item.imageUrl} className="img-fluid" alt="product image" />
+                  <img src={iconcart} className="img-fluid" alt="product image" />
                 </div>
                 <div className="product-details">
                   <h6 className="brand">Havels</h6>

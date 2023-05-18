@@ -62,7 +62,7 @@ const Sidebar = (props) => {
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="/admin/create-product" class="nav-link"><i class="far fa-circle nav-icon"></i>
+                                        <a href="/admin/list-type-product" class="nav-link"><i class="far fa-circle nav-icon"></i>
                                             <p>Danh sách loại sản phẩm</p>
                                         </a>
                                     </li>

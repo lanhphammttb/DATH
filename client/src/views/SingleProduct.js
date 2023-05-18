@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ReactStars from "react-rating-stars-component";
 import BreadCrumb from "../components/BreadCrumb";
@@ -14,14 +15,17 @@ import Container from "../components/Container";
 const SingleProduct = () => {
 
   const [product, setProduct] = useState(null);
+  
   const [orderedProduct, setorderedProduct] = useState(true);  
-  console.log(product);
-
+  // console.log(product);
+  const location = useLocation();
+  const pathSegments = location.pathname.split('/');
+  const productId = pathSegments[2];
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/anhsanpham/1`)
-      .then(response => setProduct(response.data))
+    axios.get(`http://localhost:8000/api/sanpham/${productId}`)
+      .then(response => setProduct(response.data[0]))
       .catch(error => console.error(error));
-  }, [1]);
+  }, [productId]);
 
   if (!product) {
     return <div>Loading...</div>;
@@ -30,8 +34,7 @@ const SingleProduct = () => {
     width: 594,
     height: 600,
     zoomWidth: 600,
-
-    img: "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg",
+    img: product.imageUrl,
   };
 
   const copyToClipboard = (text) => {
@@ -57,7 +60,7 @@ const SingleProduct = () => {
               </div>
             </div>
             <div className="other-product-images d-flex flex-wrap gap-15">
-            {product.map(image => (
+            {/* {product.map(image => (
               <div>
                 <img
                   src={`${image.FileName}`}
@@ -65,18 +68,18 @@ const SingleProduct = () => {
                   alt=""
                 />
               </div>
-            ))}
+            ))} */}
             </div>
           </div>
           <div className="col-6">
             <div className="main-product-details">
               <div className="border-bottom">
                 <h3 className="title">
-                  Kids Headphones Bulk 10 Pack Multi Colored For Students
+                  {product.TenSP}
                 </h3>
               </div>
               <div className="border-bottom py-3">
-                <p className="price">$ 100</p>
+                <p className="price">{product.GiaBan} VNĐ</p>
                 <div className="d-flex align-items-center gap-10">
                   <ReactStars
                     count={5}
@@ -88,7 +91,7 @@ const SingleProduct = () => {
                   <p className="mb-0 t-review">( 2 Reviews )</p>
                 </div>
                 <a className="review-btn" href="#review">
-                  Write a Review
+                  {product.MoTa}
                 </a>
               </div>
               <div className=" py-3">

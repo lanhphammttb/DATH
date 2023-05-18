@@ -100,6 +100,15 @@ app.get('/api/sanpham', (req, res) => {
     res.json(updatedResults);
   });
 });
+
+app.get('/api/loaisanpham', (req, res) => {
+  const sql = 'SELECT * FROM loaisanpham';
+  connection.query(sql, (error, results, fields) => {
+    if (error) throw error;
+    res.json(results);
+  });
+});
+
 //xử lý POST request để tải ảnh lên file ảnh và lưu trữ vào MYSQL
 const fs = require('fs');
 // app.post('/api/sanpham', upload.single('file'), (req, res)=>{
@@ -119,7 +128,21 @@ app.post('/api/sanpham', upload.single('file'), (req, res) => {
       console.error('MySQL error:', error);
       res.sendStatus(500);
     } else {
-      console.log('MySQL success:', results);
+      // console.log('MySQL success:', results);
+      res.sendStatus(200);
+    }
+  });
+});
+
+app.post('/api/loaisanpham', upload.none(), (req, res) => {
+  // console.log(req);
+  const { maloaisp, tenloaisp } = req.body;
+  connection.query('INSERT INTO loaisanpham SET ?', { maloaisp: maloaisp, tenloaisp: tenloaisp}, (error, results) => {
+    if (error) {
+      console.error('MySQL error:', error);
+      res.sendStatus(500);
+    } else {
+      // console.log('MySQL success:', results);
       res.sendStatus(200);
     }
   });
@@ -157,20 +180,30 @@ app.delete('/api/sanpham/:id', (req, res) => {
   res.send({ message: `Sản phẩm ${MaSP} đã được xóa` });
 });
 
+app.delete('/api/loaisanpham/:id', (req, res) => {
+  const MaLoaiSP = req.params.id;
+  connection.query('DELETE FROM loaisanpham WHERE MaLoaiSP = ?', [MaLoaiSP], (error, results, fields) => {
+    if (error) throw error;
+    console.log('Type product deleted successfully.');
+  });
+  res.send({ message: `Mã loại sản phẩm ${MaLoaiSP} đã được xóa` });
+});
+
+
 app.get('/api/sanpham/:id', (req, res) => {
   const id = req.params.id;
-  const sql = `SELECT Image FROM sanpham WHERE masp = ${id}`;
+  const sql = `SELECT * FROM sanpham WHERE masp = ${id}`;
+  connection.query(sql, (error, results, fields) => {
+    if (error) throw error;
 
-  connection.query(sql, (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else if (result.length === 0) {
-      res.status(404).json({ error: 'User not found' });
-    } else {
-      res.contentType('image/jpeg')
-      res.send(result[0].Image.Buffer);
-      // res.json(result[0].Image);
-    }
+    const updatedResults = results.map((result) => {
+      // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+      // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+      imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+      return { ...result, imageUrl };
+    });
+    // console.log(results);
+    res.json(updatedResults);
   });
 });
 

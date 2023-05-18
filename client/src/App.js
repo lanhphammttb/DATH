@@ -28,6 +28,7 @@ import LayoutAdmin from "./components/Admin/LayoutAdmin/LayoutAdmin";
 import CreateProduct from "./components/Admin/Product/CreateProduct";
 import ListBill from "./components/Admin/Bill/ListBill";
 import CreateBill from "./components/Admin/Bill/CreateBill";
+import ListTypeProduct from "./components/Admin/ListTypeProduct/ListTypeProduct";
 function App() {
   return (
     <>
@@ -61,9 +62,10 @@ function App() {
           <Route path="/admin" element={<LayoutAdmin />}>
             <Route index element={<ListProduct />} />
             <Route path="list-product" element={<ListProduct />} />
-            <Route path="create-product" element={<CreateProduct />} />
+            {/* <Route path="create-product" element={<CreateProduct />} /> */}
             <Route path="list-bill" element={<ListBill />} />
             <Route path="create-bill" element={<CreateBill />} />
+            <Route path="list-type-product" element={<ListTypeProduct />} />
           </Route>
         </Routes>
       </BrowserRouter>
