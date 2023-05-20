@@ -1,14 +1,26 @@
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
 import axios from 'axios';
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [data, setData] = useState([]);
+  const isAdmin = true;
+  useEffect(() => {
+    axios.get('http://localhost:8000/users')
+      .then(response => {
+        setData(response.data);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
@@ -16,10 +28,19 @@ const Login = () => {
       .then((response) => {
         const token = response.data.token;
         const user = response.data;
+        localStorage.setItem('chucvu', response.data.chucvu);
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        window.location.href = '/admin'; // Chuyển hướng sang trang dashboard sau khi đăng nhập thành công
+        debugger;
+        if (response.data.chucvu === 'Admin') {
+          window.location.href = '/admin'; // Chuyển hướng sang trang dashboard sau khi đăng nhập thành công
+          isAdmin = true;
+        }
+        else {
+          window.location.href = '/';
+          isAdmin = false;
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -33,8 +54,8 @@ const Login = () => {
     let a = document.getElementById("password");
     let b = document.getElementById("icon");
     a.type === "password" ? a.type = "text" : a.type = "password";
-    a.type === "password" ? b.classList.add('fa-eye')&&b.classList.remove('fa-eye-slash') : b.classList.add('fa-eye-slash')&&b.classList.remove('fa-eye');
-    };
+    a.type === "password" ? b.classList.add('fa-eye') && b.classList.remove('fa-eye-slash') : b.classList.add('fa-eye-slash') && b.classList.remove('fa-eye');
+  };
 
 
   return (

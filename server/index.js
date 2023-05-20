@@ -45,7 +45,7 @@ app.post('/login', (req, res) => {
   const { username, password } = req.body;
   console.log(username + password);
   connection.query(
-    `SELECT * FROM admin WHERE username = ? AND password = ?`,
+    `SELECT * FROM admin WHERE username = ? AND password = ? `,
     [username, password],
     (err, results) => {
       if (err) {
@@ -55,8 +55,9 @@ app.post('/login', (req, res) => {
       } else {
         const user = results[0];
         const name = results[0].name;
-        const token = jwt.sign({ id: user.id, username: user.username }, secretKey);
-        res.status(200).json({ token, name });
+        const chucvu = results[0].chucvu;
+        const token = jwt.sign({ id: user.id, username: user.username, chucvu: user.chucvu }, secretKey);
+        res.status(200).json({ token, name, chucvu });
       }
     }
   );
@@ -175,6 +176,17 @@ app.post('/api/hoadon', (req, res) => {
   });
 });
 
+app.post('/api/logout', function (req, res) {
+  // Xóa token hoặc session
+  req.session.destroy(function (err) {
+    if (err) {
+      console.log(err);
+    } else {
+      // Cập nhật state của ứng dụng
+      res.redirect('http://localhost:3000/login');
+    }
+  });
+});
 
 // app.get('/api/anhsanpham/1', (req, res) => {
 //   const masp = req.params.MaSP;

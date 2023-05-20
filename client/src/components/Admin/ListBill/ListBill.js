@@ -9,7 +9,7 @@ const ListBill = (props) => {
             .then(response => {
                 setData(response.data);
                 console.log(response.data);
-                console.log("A");
+               
             })
             .catch(error => {
                 console.error(error);

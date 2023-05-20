@@ -56,15 +56,19 @@ function App() {
         </Routes>
       </BrowserRouter>
       <BrowserRouter>
-        <Routes>
-          <Route path="/admin" element={<LayoutAdmin />}>
-            <Route index element={<ListProduct />} />
-            <Route path="list-product" element={<ListProduct />} />
-            <Route path="create-product" element={<CreatProduct />} />
-            <Route path="list-bill" element={<ListBill />} />
-            <Route path="create-bill" element={<CreateBill />} />
-          </Route>
-        </Routes>
+        {localStorage.getItem('chucvu') !== 'Khách hàng' ?
+          <Routes>
+            <Route path="/admin" element={<LayoutAdmin />}>
+              <Route index element={<ListProduct />} />
+              <Route path="list-product" element={<ListProduct />} />
+              <Route path="create-product" element={<CreatProduct />} />
+              <Route path="list-bill" element={<ListBill />} />
+            </Route>
+          </Routes>
+
+          : <Routes>
+            <Route path="/admin" element={<LayoutAdmin />}> </Route>
+          </Routes>}
       </BrowserRouter>
       <ToastContainer
         position="top-right"

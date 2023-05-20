@@ -7,6 +7,9 @@ import user from "../assets/images/user.svg";
 import cart from "../assets/images/cart.svg";
 import menu from "../assets/images/menu.svg";
 const Header = () => {
+    const u = JSON.parse(localStorage.getItem('user'));
+    const welcomeMessage = ` ${u.name}`;
+
     return (
         <>
             <header className="header-top-strip py-3">
@@ -85,7 +88,9 @@ const Header = () => {
                                     >
                                         <img src={user} alt="user" />
                                         <p className="mb-0">
-                                            Đăng nhập <br /> tài khoản của tôi
+                                            {
+                                                welcomeMessage ? welcomeMessage : "ĐĂNG NHẬP"
+                                            }
                                         </p>
                                     </Link>
                                 </div>
