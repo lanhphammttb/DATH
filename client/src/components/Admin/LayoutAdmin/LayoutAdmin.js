@@ -12,6 +12,8 @@ const Admin = (props) => {
       };
 
     return (
+    <>
+    {localStorage.getItem('chucvu') !== 'Khách hàng' &&
     <div class="sidebar-mini" style={{height:"auto"}} ref={pushMenuRef}>
         <div className="wrapper">
             <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -53,7 +55,10 @@ const Admin = (props) => {
             <div class="main-header navbar navbar-expand navbar-white navbar-light"> <Outlet /></div>
             <Sidebar className="main-sidebar sidebar-dark-primary elevation-4" />
         </div>   
-    </div>
+    </div>     
+    }   
+    {<Sidebar />}
+    </>
     )
 }
 export default Admin;

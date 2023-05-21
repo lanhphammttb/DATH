@@ -8,6 +8,8 @@ const Sidebar = (props) => {
     const welcomeMessage = `Welcome, ${user.name}!`;
     return (
         <>
+        {
+            localStorage.getItem('chucvu') !== 'Khách hàng' ?
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
                 <a href="/theme/index3.html" class="brand-link">
                     {/* <img src="" alt="Vinh Quang" class="brand-image img-circle elevation-3" style="opacity: .8"></img> */}
@@ -103,7 +105,10 @@ const Sidebar = (props) => {
                         </ul>
                     </nav>
                 </div>
-            </aside>
+            </aside>     
+            :
+            <h1 style={{ color: 'red', textAlign: 'center', marginTop: 50 }}>Không có quyền truy cập</h1>       
+        }
         </>
     )
 }

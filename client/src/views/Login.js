@@ -9,6 +9,20 @@ import React, { useEffect, useState, useRef} from 'react';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [data, setData] = useState([]);
+  const isAdmin = true;
+  useEffect(() => {
+    axios.get('http://localhost:8000/users')
+      .then(response => {
+        setData(response.data);
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
@@ -16,10 +30,18 @@ const Login = () => {
       .then((response) => {
         const token = response.data.token;
         const user = response.data;
+        localStorage.setItem('chucvu', response.data.chucvu);
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        window.location.href = '/admin'; // Chuyển hướng sang trang dashboard sau khi đăng nhập thành công
+        if (response.data.chucvu === 'Admin' || response.data.chucvu === 'Nhân viên') {
+          window.location.href = '/admin'; // Chuyển hướng sang trang dashboard sau khi đăng nhập thành công
+          isAdmin = true;
+        }
+        else {
+          window.location.href = '/';
+          isAdmin = false;
+        }
       })
       .catch((error) => {
         console.error(error);

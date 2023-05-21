@@ -125,6 +125,7 @@ const CreatProduct = (props) =>{
 
     return (
         <>
+        {localStorage.getItem('chucvu') === 'Admin' ?
             <div className='container'>
 
                 <Form className='row'>
@@ -189,7 +190,10 @@ const CreatProduct = (props) =>{
         
                 </Form.Group>
                 </Form>   
-            </div>             
+            </div>      
+            :
+            <h1>Không có quyền truy cập sửa sản phẩm</h1>
+        }      
         </>
     )
 }

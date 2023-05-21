@@ -55,8 +55,9 @@ app.post('/login', (req, res) => {
       } else {
         const user = results[0];
         const name = results[0].name;
-        const token = jwt.sign({ id: user.id, username: user.username }, secretKey);
-        res.status(200).json({ token, name });
+        const chucvu = results[0].chucvu;
+        const token = jwt.sign({ id: user.id, username: user.username, chucvu: user.chucvu  }, secretKey);
+        res.status(200).json({ token, name, chucvu });
       }
     }
   );
