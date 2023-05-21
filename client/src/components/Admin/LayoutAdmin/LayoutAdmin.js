@@ -12,9 +12,8 @@ const Admin = (props) => {
       };
 
     return (
-    <>
-    {localStorage.getItem('chucvu') !== 'Khách hàng' &&
     <div class="sidebar-mini" style={{height:"auto"}} ref={pushMenuRef}>
+    {localStorage.getItem('chucvu') !== 'Khách hàng' ?
         <div className="wrapper">
             <nav class="main-header navbar navbar-expand navbar-white navbar-light">
                 <ul class="navbar-nav">
@@ -54,11 +53,12 @@ const Admin = (props) => {
             </nav>  
             <div class="main-header navbar navbar-expand navbar-white navbar-light"> <Outlet /></div>
             <Sidebar className="main-sidebar sidebar-dark-primary elevation-4" />
-        </div>   
-    </div>     
-    }   
-    {<Sidebar />}
-    </>
+        </div>
+        :     
+        <h1 style={{ color: 'red', textAlign: 'center', marginTop: 50 }}>Không có quyền truy cập</h1>
+    }
+
+    </div>
     )
 }
 export default Admin;
