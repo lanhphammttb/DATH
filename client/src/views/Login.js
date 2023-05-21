@@ -78,7 +78,7 @@ const Login = () => {
                     className=" form-control input"
                     id="password"
                   />
-                  <i id="icon" className="align-self-center fas fa-eye-slash" onClick={(e) => isVisible(e)}></i>
+                  <i id="icon" style={{ cursor: "pointer" }} className="align-self-center fas fa-eye-slash" onClick={(e) => isVisible(e)}></i>
                 </div>
                 <div>
                   <Link to="/forgot-password">Forgot Password?</Link>
