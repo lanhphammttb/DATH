@@ -56,7 +56,7 @@ app.post('/login', (req, res) => {
         const user = results[0];
         const name = results[0].name;
         const chucvu = results[0].chucvu;
-        const token = jwt.sign({ id: user.id, username: user.username, chucvu: user.chucvu  }, secretKey);
+        const token = jwt.sign({ id: user.id, username: user.username, chucvu: user.chucvu }, secretKey);
         res.status(200).json({ token, name, chucvu });
       }
     }
@@ -138,7 +138,7 @@ app.post('/api/sanpham', upload.single('file'), (req, res) => {
 app.post('/api/loaisanpham', upload.none(), (req, res) => {
   // console.log(req);
   const { maloaisp, tenloaisp } = req.body;
-  connection.query('INSERT INTO loaisanpham SET ?', { maloaisp: maloaisp, tenloaisp: tenloaisp}, (error, results) => {
+  connection.query('INSERT INTO loaisanpham SET ?', { maloaisp: maloaisp, tenloaisp: tenloaisp }, (error, results) => {
     if (error) {
       console.error('MySQL error:', error);
       res.sendStatus(500);
@@ -162,7 +162,7 @@ app.put('/api/sanpham/:id', async (req, res) => {
       'UPDATE sanpham SET TenSP=? SoLuong=? GiaNhap=? GiaBan=? MaLoaiSP=? NSX=? MoTa=? Image=?,  WHERE MaSP=?',
       [tensp, soluong, gianhap, giaban, maloaisp, nsx, mota, finalImg, productId]
     );
-    
+
     console.log('up')
     res.json(updatedProduct[0]);
 
@@ -239,7 +239,12 @@ app.post('/api/hoadon', (req, res) => {
   });
 });
 
-
+app.post('/api/logout', (req, res) => {
+  // Xóa token khỏi cookie hoặc local storage
+  res.clearCookie('token');
+  // Trả về kết quả thành công
+  res.json({ success: true });
+});
 // app.get('/api/anhsanpham/1', (req, res) => {
 //   const masp = req.params.MaSP;
 //   const sql = `SELECT * FROM AnhSanPham Where MaSP= ${1}`;

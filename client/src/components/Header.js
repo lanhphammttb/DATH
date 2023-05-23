@@ -1,15 +1,33 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
+import { useState } from "react";
 // import compare from "../assets/images/compare.svg";
 // import wishlist from "../assets/images/wishlist.svg";
 import user from "../assets/images/user.svg";
 import cart from "../assets/images/cart.svg";
 import menu from "../assets/images/menu.svg";
+import axios from "axios";
+
 const Header = () => {
     const u = JSON.parse(localStorage.getItem('user'));
-    const welcomeMessage = ` ${u.name}`;
+    const welcomeMessage = u?.name;
 
+    const [state, setState] = useState(true);
+    const logout = async () => {
+        try {
+            await axios.post('/api/logout');
+            // Xóa token khỏi cookie hoặc local storage
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            localStorage.removeItem('chucvu');
+            // Chuyển hướng trang về trang đăng nhập
+            window.location.href = '/login';
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <>
             <header className="header-top-strip py-3">
@@ -46,7 +64,7 @@ const Header = () => {
                         <div className="col-5">
                             <div className="input-group" >
                                 <input
-                                style={{ height: '50px' }}
+                                    style={{ height: '50px' }}
                                     type="text"
                                     className="form-control py-2"
                                     placeholder="Nhập tên sản phẩm..."
@@ -82,19 +100,47 @@ const Header = () => {
                                         </p>
                                     </Link> */}
                                 </div>
-                                <div>
-                                    <Link
-                                        to="/login"
-                                        className="d-flex align-items-center gap-10 text-white"
-                                    >
-                                        <img src={user} alt="user" />
-                                        <p className="mb-0">
-                                        {
-                                            welcomeMessage ? welcomeMessage : "ĐĂNG NHẬP"
-                                        }
-                                            {/* Đăng nhập <br /> tài khoản của tôi */}
-                                        </p>
-                                    </Link>
+                                <div >
+                                    <ul style={{ listStyle: 'none' }}>
+                                        <li>
+                                            {welcomeMessage ?
+                                                <Link onClick={() => setState(state ? false : true)}
+                                                    to="/"
+                                                    className="d-flex align-items-center gap-10 text-white"
+                                                >
+                                                    <img src={user} alt="user" />
+                                                    <p className="mb-0"  >
+                                                        {
+                                                            welcomeMessage != undefined ? welcomeMessage : "ĐĂNG NHẬP"
+                                                        }
+                                                        {/* Đăng nhập <br /> tài khoản của tôi */}
+                                                    </p>
+
+
+                                                </Link> :
+                                                <Link onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setState(state ? false : true)
+                                                }}
+                                                    to="/login"
+                                                    className="d-flex align-items-center gap-10 text-white"
+                                                >
+                                                    <img src={user} alt="user" />
+                                                    <p className="mb-0"  >
+                                                        {
+                                                            welcomeMessage != undefined ? welcomeMessage : "ĐĂNG NHẬP"
+                                                        }
+                                                        {/* Đăng nhập <br /> tài khoản của tôi */}
+                                                    </p>
+                                                </Link>
+                                            }
+                                        </li>
+                                        <li style={{ width: 77, height: 28 }} >
+                                            <div style={{ display: state ? "none" : "flex" }}>
+                                                <button onClick={() => logout()} style={{ color: 'red', backgroundColor: '#212529' }}>Đăng xuất</button>
+                                            </div>
+                                        </li>
+                                    </ul>
                                 </div>
                                 <div>
                                     <Link

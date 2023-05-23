@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
 import "../../../styles/adminlte.min.css";
 import "./Siderbar.scss";
+import axios from 'axios';
 
 const Sidebar = (props) => {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const welcomeMessage = `Welcome, ${user.name}!`;
+    const logout = async () => {
+        try {
+            await axios.post('/api/logout');
+            // Xóa token khỏi cookie hoặc local storage
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            localStorage.removeItem('chucvu');
+            // Chuyển hướng trang về trang đăng nhập
+            window.location.href = '/login';
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <>
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -97,6 +112,9 @@ const Sidebar = (props) => {
                                         <a href="pages/tables/data.html" class="nav-link"><i class="far fa-circle nav-icon"></i>
                                             <p>Đơn hàng bị hủy</p>
                                         </a>
+                                    </li>
+                                    <li style={{ textAlign: 'center' }}>
+                                        <button onClick={() => logout()} style={{ color: 'red' }}>Đăng xuất</button>
                                     </li>
                                 </ul>
                             </li>

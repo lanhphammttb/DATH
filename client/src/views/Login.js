@@ -1,15 +1,20 @@
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
 import axios from 'axios';
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
+
+
 
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
+
   const [data, setData] = useState([]);
   const isAdmin = true;
   useEffect(() => {
@@ -50,15 +55,30 @@ const Login = () => {
 
   const pushMenuRef = useRef(null);
 
-  const isVisible = (e) => {
-    e.preventDefault();
-    let a = document.getElementById("password");
-    let b = document.getElementById("icon");
-    a.type === "password" ? a.type = "text" : a.type = "password";
-    a.type === "password" ? b.classList.add('fa-eye')&&b.classList.remove('fa-eye-slash') : b.classList.add('fa-eye-slash')&&b.classList.remove('fa-eye');
-    };
+  // const isVisible = (e) => {
+  //   e.preventDefault();
+  //   let a = document.getElementById("password");
+  //   let b = document.getElementById("icon");
+  //   a.type === "password" ? a.type = "text" : a.type = "password";
+  //   a.type === "password" ? b.classList.add('fa-eye')&&b.classList.remove('fa-eye-slash') : b.classList.add('fa-eye-slash')&&b.classList.remove('fa-eye');
+  //   };
 
+  const [status, setStatus] = useState(false);
 
+  const isVisible = () => {
+    setStatus(status ? false : true)
+  }
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // kiểm tra xem người dùng đã đăng nhập hay chưa
+    const isLoggedIn = localStorage.getItem('user');
+
+    if (isLoggedIn) {
+      // nếu đã đăng nhập, chuyển hướng đến trangkhác
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
   return (
     <>
       <Meta title={"Login"} />
@@ -73,13 +93,13 @@ const Login = () => {
                 <div className="d-flex" style={{ backgroundColor: "#F5F5F7", borderRadius: "10px" }}>
                   <input
                     value={password} onChange={(e) => setPassword(e.target.value)}
-                    type="password"
+                    type={status ? "text" : "password"}
                     name="password"
                     placeholder="Password"
                     className=" form-control input"
                     id="password"
                   />
-                  <i id="icon" className="align-self-center fas fa-eye-slash" onClick={(e) => isVisible(e)}></i>
+                  <FontAwesomeIcon style={{ marginTop: 18, marginRight: 10, cursor: "pointer" }} icon={status ? faEye : faEyeSlash} onClick={isVisible} />
                 </div>
                 <div>
                   <Link to="/forgot-password">Forgot Password?</Link>
