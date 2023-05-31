@@ -5,20 +5,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateTypeProduct from './CreateTypeProduct';
 const ListTypeProduct = (props) => {
-
   const [selectedTypeProduct, setSelectedTypeProduct] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
   const [data, setData] = useState([]);
   useEffect(() => {
-    axios.get('http://localhost:8000/api/loaisanpham')
-      .then(response => {
+    const fetchLoaiSanPham = async () => {
+      try {
+        const response = await axios.get('/api/loaisanpham');
         setData(response.data);
-        console.log(response.data);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error(error);
-      });
+      }
+    };
+
+    fetchLoaiSanPham();
   }, []);
 
   const handleSelectTypeProduct = (typeProduct) => {
@@ -31,21 +32,21 @@ const ListTypeProduct = (props) => {
     setIsEditing(true);
   };
 
-  const handleDeleteTypeProduct = (typeProductId) =>  {
-    axios.delete(`http://localhost:8000/api/loaisanpham/${typeProductId}`)
-    .then(response => {
-      console.log(response.data);
-      // Xử lý kết quả trả về khi xóa thành công
-      toast.success('Xóa loại sản phẩm thành công');
-      window.location.reload();
-    })
-    .catch(error => {
-      console.error(error);
-      // Xử lý lỗi khi xóa không thành công
-      toast.error('Xóa loại sản phẩm thất bại');
-    });
-  }
-
+  const handleDeleteTypeProduct = (typeProductId) => {
+    axios
+      .delete(`/api/loaisanpham/${typeProductId}`)
+      .then((response) => {
+        console.log(response.data);
+        // Xử lý kết quả trả về khi xóa thành công
+        toast.success('Xóa loại sản phẩm thành công');
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error(error);
+        // Xử lý lỗi khi xóa không thành công
+        toast.error('Xóa loại sản phẩm thất bại');
+      });
+  };
 
   // const handleAddProduct = (e) => {
   //   e.preventDefault();
@@ -53,14 +54,14 @@ const ListTypeProduct = (props) => {
   // };
 
   return (
-    <div className='container'>
+    <div className="container">
       {/* <div className='mb-3'>
         <button class="btn btn-navbar" type="button" onClick={(e) => handleAddProduct(e)}>
           <i class="fas fa-plus"></i>Thêm sản phẩm
         </button>
       </div> */}
-      <div className='row'>
-        <div className='col-md-6 type'>        
+      <div className="row">
+        <div className="col-md-6 type">
           <table className="table table-striped">
             <thead>
               <tr>
@@ -70,27 +71,43 @@ const ListTypeProduct = (props) => {
               </tr>
             </thead>
             <tbody>
-              {data.map(item => (
-                <tr key={item.MaLoaiSP} onClick={() => handleSelectTypeProduct(item)}>
+              {data.map((item) => (
+                <tr
+                  key={item.MaLoaiSP}
+                  onClick={() => handleSelectTypeProduct(item)}
+                >
                   <td>{item.MaLoaiSP}</td>
                   <td>{item.TenLoaiSP}</td>
-                  <td><i class="fad fa-edit" onClick={() => handleEditTypeProduct(item.MaLoaiSP)}></i></td>
-                  <td><i class="fad fa-trash-alt" onClick={() => handleDeleteTypeProduct(item.MaLoaiSP)}></i></td>
+                  <td>
+                    <i
+                      class="fad fa-edit"
+                      onClick={() => handleEditTypeProduct(item.MaLoaiSP)}
+                    ></i>
+                  </td>
+                  <td>
+                    <i
+                      class="fad fa-trash-alt"
+                      onClick={() => handleDeleteTypeProduct(item.MaLoaiSP)}
+                    ></i>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div className='col-md-6'>
-        {selectedTypeProduct? (
-          <CreateTypeProduct typeProduct={selectedTypeProduct} isEditing={isEditing}/>
-        )
-        : (
-          <CreateTypeProduct/>)}  </div>     
+        <div className="col-md-6">
+          {selectedTypeProduct ? (
+            <CreateTypeProduct
+              typeProduct={selectedTypeProduct}
+              isEditing={isEditing}
+            />
+          ) : (
+            <CreateTypeProduct />
+          )}{' '}
+        </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
 export default ListTypeProduct;

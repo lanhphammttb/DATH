@@ -1,35 +1,46 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import ReactStars from "react-rating-stars-component";
-import BreadCrumb from "../components/BreadCrumb";
-import Meta from "../components/Meta";
-import ProductCard from "../components/ProductCard";
-import ReactImageZoom from "react-image-zoom";
-import Color from "../components/Color";
-import { TbGitCompare } from "react-icons/tb";
-import { AiOutlineHeart } from "react-icons/ai";
-import { Link } from "react-router-dom";
-import watch from "../assets/images/watch.jpg";
-import Container from "../components/Container";
+import ReactStars from 'react-rating-stars-component';
+import BreadCrumb from '../components/BreadCrumb';
+import Meta from '../components/Meta';
+import ProductCard from '../components/ProductCard';
+import ReactImageZoom from 'react-image-zoom';
+import Color from '../components/Color';
+import { TbGitCompare } from 'react-icons/tb';
+import { AiOutlineHeart } from 'react-icons/ai';
+import { Link } from 'react-router-dom';
+// import watch from "../assets/images/watch.jpg";
+import Container from '../components/Container';
+import { CartContext } from '../CartContext';
 const SingleProduct = () => {
-
   const [product, setProduct] = useState(null);
-  
-  const [orderedProduct, setorderedProduct] = useState(true);  
-  // console.log(product);
-  const location = useLocation();
-  const pathSegments = location.pathname.split('/');
-  const productId = pathSegments[2];
+
+  const [orderedProduct, setorderedProduct] = useState(true);
+
+  const { addToCart } = useContext(CartContext);
+
+  const [quantity, setQuantity] = useState(1);
+
+  // const [modalData, setModalData] = useState(null);
+
+  const handleQuantityChange = (event) => {
+    setQuantity(event.target.value);
+  };
+
+  const { id } = useParams();
   useEffect(() => {
-    axios.get(`http://localhost:8000/api/sanpham/${productId}`)
-      .then(response => setProduct(response.data[0]))
-      .catch(error => console.error(error));
-  }, [productId]);
+    axios
+      .get(`/api/sanpham/${id}`)
+      .then((response) => setProduct(response.data[0]))
+      .catch((error) => console.error(error));
+  }, [id]);
 
   if (!product) {
     return <div>Loading...</div>;
   }
+
   const props = {
     width: 594,
     height: 600,
@@ -38,18 +49,27 @@ const SingleProduct = () => {
   };
 
   const copyToClipboard = (text) => {
-    console.log("text", text);
-    var textField = document.createElement("textarea");
+    console.log('text', text);
+    var textField = document.createElement('textarea');
     textField.innerText = text;
     document.body.appendChild(textField);
     textField.select();
-    document.execCommand("copy");
+    document.execCommand('copy');
     textField.remove();
   };
-  const closeModal = () => { };
+  const closeModal = () => {};
+
+  const handleAddToCart = () => {
+    addToCart({
+      ...product,
+      quantity: quantity,
+      prices: quantity * product.GiaBan,
+    });
+  };
+
   return (
     <>
-      <Meta title={"Product Name"} />
+      <Meta title={'Product Name'} />
       <BreadCrumb title="Product Name" />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
@@ -60,7 +80,7 @@ const SingleProduct = () => {
               </div>
             </div>
             <div className="other-product-images d-flex flex-wrap gap-15">
-            {/* {product.map(image => (
+              {/* {product.map(image => (
               <div>
                 <img
                   src={`${image.FileName}`}
@@ -74,12 +94,15 @@ const SingleProduct = () => {
           <div className="col-6">
             <div className="main-product-details">
               <div className="border-bottom">
-                <h3 className="title">
-                  {product.TenSP}
-                </h3>
+                <h3 className="title">{product.TenSP}</h3>
               </div>
               <div className="border-bottom py-3">
-                <p className="price">{product.GiaBan} VNĐ</p>
+                <p className="price">
+                  {product.GiaBan.toLocaleString('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  })}
+                </p>
                 <div className="d-flex align-items-center gap-10">
                   <ReactStars
                     count={5}
@@ -91,11 +114,11 @@ const SingleProduct = () => {
                   <p className="mb-0 t-review">( 2 Reviews )</p>
                 </div>
                 <a className="review-btn" href="#review">
-                  {product.MoTa}
+                  {/* {product.MoTa} */}
                 </a>
               </div>
               <div className=" py-3">
-                <div className="d-flex gap-10 align-items-center my-2">
+                {/* <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Type :</h3>
                   <p className="product-data">Watch</p>
                 </div>
@@ -110,10 +133,10 @@ const SingleProduct = () => {
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Tags :</h3>
                   <p className="product-data">Watch</p>
-                </div>
+                </div> */}
                 <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Availablity :</h3>
-                  <p className="product-data">In Stock</p>
+                  <h3 className="product-heading">Sẵn Có:</h3>
+                  <p className="product-data">Còn Hàng</p>
                 </div>
                 <div className="d-flex gap-10 flex-column mt-2 mb-3">
                   <h3 className="product-heading">Size :</h3>
@@ -137,7 +160,7 @@ const SingleProduct = () => {
                   <Color />
                 </div>
                 <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
-                  <h3 className="product-heading">Quantity :</h3>
+                  <h3 className="product-heading">Số lượng :</h3>
                   <div className="">
                     <input
                       type="number"
@@ -145,7 +168,9 @@ const SingleProduct = () => {
                       min={1}
                       max={10}
                       className="form-control"
-                      style={{ width: "70px" }}
+                      style={{ width: '70px' }}
+                      value={quantity}
+                      onChange={handleQuantityChange}
                       id=""
                     />
                   </div>
@@ -156,9 +181,9 @@ const SingleProduct = () => {
                       data-bs-target="#staticBackdrop"
                       type="button"
                     >
-                      Add to Cart
+                      Thêm Vào Giỏ Hàng
                     </button>
-                    <button className="button signup">Buy It Now</button>
+                    <button className="button signup">Mua Ngay</button>
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-15">
@@ -187,7 +212,7 @@ const SingleProduct = () => {
                     href="javascript:void(0);"
                     onClick={() => {
                       copyToClipboard(
-                        "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
+                        'https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg'
                       );
                     }}
                   >
@@ -202,14 +227,9 @@ const SingleProduct = () => {
       <Container class1="description-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
-            <h4>Description</h4>
+            <h4>Mô tả</h4>
             <div className="bg-white p-3">
-              <p>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Tenetur nisi similique illum aut perferendis voluptas, quisquam
-                obcaecati qui nobis officia. Voluptatibus in harum deleniti
-                labore maxime officia esse eos? Repellat?
-              </p>
+              <p>{product.MoTa}</p>
             </div>
           </div>
         </div>
@@ -235,7 +255,7 @@ const SingleProduct = () => {
                 </div>
                 {orderedProduct && (
                   <div>
-                    <a className="text-dark text-decoration-underline" href="">
+                    <a className="text-dark text-decoration-underline" href="#">
                       Write a Review
                     </a>
                   </div>
@@ -321,18 +341,23 @@ const SingleProduct = () => {
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                onClick={() => handleAddToCart()}
               ></button>
             </div>
             <div className="modal-body py-0">
               <div className="d-flex align-items-center">
                 <div className="flex-grow-1 w-50">
-                  <img src={watch} className="img-fluid" alt="product imgae" />
+                  <img
+                    src={product.imageUrl}
+                    className="img-fluid"
+                    alt="product img"
+                  />
                 </div>
                 <div className="d-flex flex-column flex-grow-1 w-50">
-                  <h6 className="mb-3">Apple Watch</h6>
-                  <p className="mb-1">Quantity: asgfd</p>
-                  <p className="mb-1">Color: asgfd</p>
-                  <p className="mb-1">Size: asgfd</p>
+                  <h6 className="mb-3">{product.TenSP}</h6>
+                  <p className="mb-1">Số lượng: {quantity}</p>
+                  <p className="mb-1">Màu: Không có</p>
+                  <p className="mb-1">Size: Không có</p>
                 </div>
               </div>
             </div>

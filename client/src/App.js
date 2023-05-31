@@ -1,36 +1,35 @@
-import React from "react";
+import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Home from "./views/Home";
-import About from "./views/About";
-import Contact from "./views/Contact";
-import OurStore from "./views/OurStore";
-import Blog from "./views/Blog";
-import CompareProduct from "./views/CompareProduct";
-import Wishlist from "./views/Wishlist";
-import Login from "./views/Login";
-import Forgotpassword from "./views/Forgotpassword";
-import Signup from "./views/Signup";
-import Resetpassword from "./views/Resetpassword";
-import SingleBlog from "./views/SingleBlog";
-import PrivacyPolicy from "./views/PrivacyPolicy";
-import RefundPloicy from "./views/RefundPloicy";
-import ShippingPolicy from "./views/ShippingPolicy";
-import TermAndContions from "./views/TermAndContions";
-import SingleProduct from "./views/SingleProduct";
-import Cart from "./views/Cart";
-import Checkout from "./views/Checkout";
-import ListProduct from "./components/Admin/Product/ListProduct";
-import LayoutAdmin from "./components/Admin/LayoutAdmin/LayoutAdmin";
-import CreateProduct from "./components/Admin/Product/CreateProduct";
-import ListBill from "./components/Admin/Bill/ListBill";
-import CreateBill from "./components/Admin/Bill/CreateBill";
-import ListTypeProduct from "./components/Admin/ListTypeProduct/ListTypeProduct";
+import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import Home from './views/Home';
+import About from './views/About';
+import Contact from './views/Contact';
+import OurStore from './views/OurStore';
+import Blog from './views/Blog';
+import CompareProduct from './views/CompareProduct';
+import Wishlist from './views/Wishlist';
+import Login from './views/Login';
+import Forgotpassword from './views/Forgotpassword';
+import Signup from './views/Signup';
+import Resetpassword from './views/Resetpassword';
+import SingleBlog from './views/SingleBlog';
+import PrivacyPolicy from './views/PrivacyPolicy';
+import RefundPloicy from './views/RefundPloicy';
+import ShippingPolicy from './views/ShippingPolicy';
+import TermAndContions from './views/TermAndContions';
+import SingleProduct from './views/SingleProduct';
+import Cart from './views/Cart';
+import Checkout from './views/Checkout';
+import ListProduct from './components/Admin/Product/ListProduct';
+import LayoutAdmin from './components/Admin/LayoutAdmin/LayoutAdmin';
+import ListBill from './components/Admin/Bill/ListBill';
+import ListTypeProduct from './components/Admin/ListTypeProduct/ListTypeProduct';
+import { CartProvider } from './CartContext';
 function App() {
-  const u = JSON.parse(localStorage.getItem('user'));
+  // const u = JSON.parse(localStorage.getItem('user'));
 
   return (
     <>
@@ -42,6 +41,7 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="product" element={<OurStore />} />
             <Route path="product/:id" element={<SingleProduct />} />
+            <Route path="product/?search=:search" element={<OurStore />} />
             <Route path="blogs" element={<Blog />} />
             <Route path="blog/:id" element={<SingleBlog />} />
             <Route path="cart" element={<Cart />} />

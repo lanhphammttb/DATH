@@ -1,7 +1,7 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { BsLinkedin, BsGithub, BsYoutube, BsInstagram } from "react-icons/bs";
-import newsletter from "../assets/images/newsletter.png";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { BsLinkedin, BsGithub, BsYoutube, BsInstagram } from 'react-icons/bs';
+import newsletter from '../assets/images/newsletter.png';
 const Footer = () => {
   return (
     <>
@@ -111,8 +111,7 @@ const Footer = () => {
         <div className="container-xxl">
           <div className="row">
             <div className="col-12">
-              <p className="text-center mb-0 text-white">
-              </p>
+              <p className="text-center mb-0 text-white"></p>
             </div>
           </div>
         </div>

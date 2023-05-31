@@ -1,15 +1,15 @@
-const express = require("express");
+const express = require('express');
 var mysql = require('mysql2');
 const cors = require('cors');
-const multer = require("multer");
-const moment = require("moment");
+const multer = require('multer');
+const moment = require('moment');
 const { format } = require('date-fns');
+const unidecode = require('unidecode');
 const app = express();
 
 app.use(cors());
 
 const bodyParser = require('body-parser');
-
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -17,9 +17,9 @@ app.use(bodyParser.json());
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  port: '3306',  /* port on which phpmyadmin run */
+  port: '3306' /* port on which phpmyadmin run */,
   password: '',
-  database: 'test'
+  database: 'test',
 });
 
 connection.connect((err) => {
@@ -27,8 +27,7 @@ connection.connect((err) => {
   console.log('Connected to MySQL database!');
 });
 
-
-app.get('/users', (req, res) => {
+app.get('/api/users', (req, res) => {
   connection.query('SELECT * FROM admin', (err, results) => {
     if (err) {
       res.status(500).json({ error: err });
@@ -41,7 +40,7 @@ app.get('/users', (req, res) => {
 const jwt = require('jsonwebtoken');
 const secretKey = 'yoursecretkey';
 
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   console.log(username + password);
   connection.query(
@@ -56,7 +55,10 @@ app.post('/login', (req, res) => {
         const user = results[0];
         const name = results[0].name;
         const chucvu = results[0].chucvu;
-        const token = jwt.sign({ id: user.id, username: user.username, chucvu: user.chucvu }, secretKey);
+        const token = jwt.sign(
+          { id: user.id, username: user.username, chucvu: user.chucvu },
+          secretKey
+        );
         res.status(200).json({ token, name, chucvu });
       }
     }
@@ -66,27 +68,53 @@ app.post('/login', (req, res) => {
 //khởi tạo middleware multer
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, './uploads')
+    callback(null, './uploads');
   },
   filename: function (req, file, callback) {
-    callback(null, `image-${Date.now()}.${file.originalname}`)
-  }
+    callback(null, `image-${Date.now()}.${file.originalname}`);
+  },
 });
 
 // img filter
 const isImage = (req, file, callback) => {
-  if (file.mimetype.startsWith("image")) {
-    callback(null, true)
+  if (file.mimetype.startsWith('image')) {
+    callback(null, true);
   } else {
-    callback(null, Error("only image is allowd"))
+    callback(null, Error('only image is allowd'));
   }
-}
+};
 
 const upload = multer({
   storage: storage,
-  fileFilter: isImage
+  fileFilter: isImage,
 });
+// app.get('/api/sanpham', (req, res) => {
+//   const sql = 'SELECT * FROM sanpham';
+//   connection.query(sql, (error, results, fields) => {
+//     if (error) throw error;
+
+//     const updatedResults = results.map((result) => {
+//       // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+//       // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+//       imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+//       return { ...result, imageUrl };
+//     });
+//     // console.log(results);
+//     res.json(updatedResults);
+//   });
+// });
+
+app.get('/api/loaisanpham', (req, res) => {
+  const sql = 'SELECT * FROM loaisanpham';
+  connection.query(sql, (error, results, fields) => {
+    if (error) throw error;
+    res.json(results);
+  });
+});
+
+// Xử lý yêu cầu GET /api/products
 app.get('/api/sanpham', (req, res) => {
+  const { searchTerm } = req.query;
   const sql = 'SELECT * FROM sanpham';
   connection.query(sql, (error, results, fields) => {
     if (error) throw error;
@@ -97,16 +125,16 @@ app.get('/api/sanpham', (req, res) => {
       imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
       return { ...result, imageUrl };
     });
-    // console.log(results);
-    res.json(updatedResults);
-  });
-});
-
-app.get('/api/loaisanpham', (req, res) => {
-  const sql = 'SELECT * FROM loaisanpham';
-  connection.query(sql, (error, results, fields) => {
-    if (error) throw error;
-    res.json(results);
+    // Lọc danh sách sản phẩm dựa trên searchTerm
+    const filteredProducts = searchTerm
+      ? updatedResults.filter((product) =>
+          unidecode(product.TenSP.toLowerCase()).includes(
+            unidecode(searchTerm.toLowerCase())
+          )
+        )
+      : updatedResults;
+    // Trả về danh sách sản phẩm dưới dạng JSON
+    res.json(filteredProducts);
   });
 });
 
@@ -114,7 +142,8 @@ app.get('/api/loaisanpham', (req, res) => {
 const fs = require('fs');
 // app.post('/api/sanpham', upload.single('file'), (req, res)=>{
 app.post('/api/sanpham', upload.single('file'), (req, res) => {
-  const { masp, tensp, soluong, gianhap, giaban, maloaisp, nsx, mota } = req.body;
+  const { masp, tensp, soluong, gianhap, giaban, maloaisp, nsx, mota } =
+    req.body;
   // const image = req.file.buffer;
   // var img = fs.readFileSync(req.file.path);
   // var encode_image = img.toString('base64');
@@ -124,29 +153,47 @@ app.post('/api/sanpham', upload.single('file'), (req, res) => {
   // };
   // console.log(JSON.stringify(req.body));
   const finalImg = req.body.file;
-  connection.query('INSERT INTO sanpham SET ?', { masp: masp, SoLuong: soluong, GiaNhap: gianhap, GiaBan: giaban, MaLoaiSP: maloaisp, NSX: nsx, MoTa: mota, Image: finalImg, TenSP: tensp }, (error, results) => {
-    if (error) {
-      console.error('MySQL error:', error);
-      res.sendStatus(500);
-    } else {
-      // console.log('MySQL success:', results);
-      res.sendStatus(200);
+  connection.query(
+    'INSERT INTO sanpham SET ?',
+    {
+      masp: masp,
+      SoLuong: soluong,
+      GiaNhap: gianhap,
+      GiaBan: giaban,
+      MaLoaiSP: maloaisp,
+      NSX: nsx,
+      MoTa: mota,
+      Image: finalImg,
+      TenSP: tensp,
+    },
+    (error, results) => {
+      if (error) {
+        console.error('MySQL error:', error);
+        res.sendStatus(500);
+      } else {
+        // console.log('MySQL success:', results);
+        res.sendStatus(200);
+      }
     }
-  });
+  );
 });
 
 app.post('/api/loaisanpham', upload.none(), (req, res) => {
   // console.log(req);
   const { maloaisp, tenloaisp } = req.body;
-  connection.query('INSERT INTO loaisanpham SET ?', { maloaisp: maloaisp, tenloaisp: tenloaisp }, (error, results) => {
-    if (error) {
-      console.error('MySQL error:', error);
-      res.sendStatus(500);
-    } else {
-      // console.log('MySQL success:', results);
-      res.sendStatus(200);
+  connection.query(
+    'INSERT INTO loaisanpham SET ?',
+    { maloaisp: maloaisp, tenloaisp: tenloaisp },
+    (error, results) => {
+      if (error) {
+        console.error('MySQL error:', error);
+        res.sendStatus(500);
+      } else {
+        // console.log('MySQL success:', results);
+        res.sendStatus(200);
+      }
     }
-  });
+  );
 });
 
 app.put('/api/sanpham/:id', async (req, res) => {
@@ -160,12 +207,21 @@ app.put('/api/sanpham/:id', async (req, res) => {
     // Cập nhật thông tin sản phẩm trong CSDL
     const [rows] = await connection.execute(
       'UPDATE sanpham SET TenSP=? SoLuong=? GiaNhap=? GiaBan=? MaLoaiSP=? NSX=? MoTa=? Image=?,  WHERE MaSP=?',
-      [tensp, soluong, gianhap, giaban, maloaisp, nsx, mota, finalImg, productId]
+      [
+        tensp,
+        soluong,
+        gianhap,
+        giaban,
+        maloaisp,
+        nsx,
+        mota,
+        finalImg,
+        productId,
+      ]
     );
 
-    console.log('up')
+    console.log('up');
     res.json(updatedProduct[0]);
-
   } catch (error) {
     console.error(error);
     res.status(500).send(`Error updating product: ${error.message}`);
@@ -174,22 +230,29 @@ app.put('/api/sanpham/:id', async (req, res) => {
 
 app.delete('/api/sanpham/:id', (req, res) => {
   const MaSP = req.params.id;
-  connection.query('DELETE FROM sanpham WHERE MaSP = ?', [MaSP], (error, results, fields) => {
-    if (error) throw error;
-    console.log('Product deleted successfully.');
-  });
+  connection.query(
+    'DELETE FROM sanpham WHERE MaSP = ?',
+    [MaSP],
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log('Product deleted successfully.');
+    }
+  );
   res.send({ message: `Sản phẩm ${MaSP} đã được xóa` });
 });
 
 app.delete('/api/loaisanpham/:id', (req, res) => {
   const MaLoaiSP = req.params.id;
-  connection.query('DELETE FROM loaisanpham WHERE MaLoaiSP = ?', [MaLoaiSP], (error, results, fields) => {
-    if (error) throw error;
-    console.log('Type product deleted successfully.');
-  });
+  connection.query(
+    'DELETE FROM loaisanpham WHERE MaLoaiSP = ?',
+    [MaLoaiSP],
+    (error, results, fields) => {
+      if (error) throw error;
+      console.log('Type product deleted successfully.');
+    }
+  );
   res.send({ message: `Mã loại sản phẩm ${MaLoaiSP} đã được xóa` });
 });
-
 
 app.get('/api/sanpham/:id', (req, res) => {
   const id = req.params.id;
@@ -215,28 +278,41 @@ app.get('/api/hoadon', (req, res) => {
       res.status(500).json({ error: err });
     } else {
       const updatedResults = results.map((result) => {
-        const formattedDateTime = format(new Date(result.NgayLapHD), 'dd/MM/yyyy HH:mm:ss');
+        const formattedDateTime = format(
+          new Date(result.NgayLapHD),
+          'dd/MM/yyyy HH:mm:ss'
+        );
         return { ...result, formattedDateTime };
       });
       res.status(200).json(updatedResults);
     }
-  })
-
+  });
 });
 
 app.post('/api/hoadon', (req, res) => {
   const { mahd, makh, ngaylaphd, khuyenmai, tongtien, ghichu } = req.body;
 
   const finalImg = req.body.file;
-  connection.query('INSERT INTO hoadon SET ?', { MaHD: mahd, MaKH: makh, NgayLapHD: ngaylaphd, KhuyenMai: khuyenmai, TongTien: tongtien, GhiChu: ghichu }, (error, results) => {
-    if (error) {
-      console.error('MySQL error:', error);
-      res.sendStatus(500);
-    } else {
-      console.log('MySQL success:', results);
-      res.sendStatus(200);
+  connection.query(
+    'INSERT INTO hoadon SET ?',
+    {
+      MaHD: mahd,
+      MaKH: makh,
+      NgayLapHD: ngaylaphd,
+      KhuyenMai: khuyenmai,
+      TongTien: tongtien,
+      GhiChu: ghichu,
+    },
+    (error, results) => {
+      if (error) {
+        console.error('MySQL error:', error);
+        res.sendStatus(500);
+      } else {
+        console.log('MySQL success:', results);
+        res.sendStatus(200);
+      }
     }
-  });
+  );
 });
 
 app.post('/api/logout', (req, res) => {
@@ -254,8 +330,6 @@ app.post('/api/logout', (req, res) => {
 //     res.send(result);
 //   });
 // });
-
-
 
 const port = process.env.PORT || 8000;
 
