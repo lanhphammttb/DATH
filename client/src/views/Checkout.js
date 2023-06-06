@@ -1,11 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BiArrowBack } from 'react-icons/bi';
 import watch from '../assets/images/watch.jpg';
 import Container from '../components/Container';
 import { CartContext } from '../CartContext';
+import AddressForm from '../components/AddressForm';
 const Checkout = () => {
   const { cartItems, totalPrice } = useContext(CartContext);
+  const [address, setAddress] = useState({});
+
+  const handleAddressChange = (newAddress) => {
+    setAddress(newAddress);
+  };
   return (
     <>
       <Container class1="checkout-wrapper py-5 home-wrapper-2">
@@ -52,42 +58,46 @@ const Checkout = () => {
                 action=""
                 className="d-flex gap-15 flex-wrap justify-content-between"
               >
-                <div className="w-100">
-                  <select name="" className="form-control form-select" id="">
-                    <option value="" selected disabled>
-                      Select Country
-                    </option>
-                  </select>
-                </div>
                 <div className="flex-grow-1">
                   <input
                     type="text"
-                    placeholder="First Name"
+                    placeholder="Họ và tên"
                     className="form-control"
                   />
                 </div>
                 <div className="flex-grow-1">
                   <input
                     type="text"
-                    placeholder="Last Name"
+                    placeholder="Số điện thoại"
                     className="form-control"
                   />
                 </div>
                 <div className="w-100">
-                  <input
-                    type="text"
-                    placeholder="Address"
-                    className="form-control"
-                  />
+                  <form>
+                    <h4 class="title total">
+                      Tỉnh/Thành phố, Quận/Huyện, Phường/Xã
+                    </h4>
+                    <AddressForm onChange={handleAddressChange} />
+                  </form>
+                </div>
+                <div className="d-flex">
+                  <div className="mr-2">
+                    {address.province ? address.province.label : ''},
+                  </div>
+                  <div className="mr-2">
+                    {address.district ? address.district.label : ''},
+                  </div>
+                  <div>{address.ward ? address.ward.label : ''}</div>
                 </div>
                 <div className="w-100">
+                  <h4 class="title total">Địa chỉ cụ thể</h4>
                   <input
                     type="text"
-                    placeholder="Apartment, Suite ,etc"
+                    placeholder="Tên đường, Tòa nhà, Số nhà."
                     className="form-control"
                   />
                 </div>
-                <div className="flex-grow-1">
+                {/* <div className="flex-grow-1">
                   <input
                     type="text"
                     placeholder="City"
@@ -107,7 +117,7 @@ const Checkout = () => {
                     placeholder="Zipcode"
                     className="form-control"
                   />
-                </div>
+                </div> */}
                 <div className="w-100">
                   <div className="d-flex justify-content-between align-items-center">
                     <Link to="/cart" className="text-dark">

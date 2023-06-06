@@ -12,39 +12,22 @@ import addcart from '../assets/images/add-cart.svg';
 import view from '../assets/images/view.svg';
 import { CartContext } from '../CartContext';
 import _ from 'lodash';
+import LoadingBox from './LoadingBox';
 const ProductCard = (props) => {
   const { grid } = props;
   const { condition } = props;
   let location = useLocation();
   const [products, setProducts] = useState([]);
-  // const [id, setId] = useState('');
   const { searchTerm } = useContext(CartContext);
+  const [topSeller, setTopSeller] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   axios
-  //     .get('/api/sanpham')
-  //     .then((response) => {
-  //       setProducts(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, []);
+  const fetchTopSeller = async () => {
+    await axios.get('/api/sanpham/topseller').then((response) => {
+      setTopSeller(response.data);
+    });
+  };
 
-  // useEffect(() => {
-  //   if (searchTerm) {
-  //     axios
-  //       .get('http://localhost:8000/api/sanpham', { params: { searchTerm } })
-  //       .then((response) => {
-  //         setProducts(response.data);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   } else {
-  //     setProducts(products);
-  //   }
-  // }, [searchTerm, products]);
   const fetchProducts = async () => {
     let url = 'http://localhost:8000/api/sanpham';
     let config = {};
@@ -53,9 +36,14 @@ const ProductCard = (props) => {
     }
 
     const response = await axios.get(url, config);
+    setIsLoading(false);
     let data = response.data;
 
+    setIsLoading(false);
     switch (condition) {
+      case 'Bán Chạy':
+        data = topSeller;
+        break;
       case 'Giá, Thấp đến Cao':
         data = _.sortBy(data, 'GiaBan');
         break;
@@ -77,8 +65,17 @@ const ProductCard = (props) => {
   };
 
   useEffect(() => {
+    if (condition === 'Liên Quan') {
+      setIsLoading(true);
+    }
     fetchProducts();
+    fetchTopSeller();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, condition]);
+
+  if (isLoading) {
+    return <LoadingBox />;
+  }
 
   return (
     <>
@@ -119,7 +116,6 @@ const ProductCard = (props) => {
             <div className="product-details">
               <h6 className="brand">Havels</h6>
               <h5
-                p
                 style={{ fontFamily: 'Roboto, sans-serif' }}
                 className="product-title"
               >
@@ -140,14 +136,29 @@ const ProductCard = (props) => {
                 dolores et quas molestias excepturi sint occaecati cupiditate
                 non provident, similique sunt...
               </p>
-              <p className="price">
-                <p>
+              <div
+                className="price-wrapper"
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <p className="price">
                   {item.GiaBan.toLocaleString('vi-VN', {
                     style: 'currency',
                     currency: 'VND',
                   })}
                 </p>
-              </p>
+                {condition === 'Bán Chạy' ? (
+                  <p
+                    style={{
+                      position: 'absolute',
+                      left: '110px',
+                      marginLeft: '110px',
+                    }}
+                  >
+                    {' '}
+                    Đã bán {item.topseller}
+                  </p>
+                ) : null}
+              </div>
             </div>
             <div className="action-bar position-absolute">
               <div className="d-flex flex-column gap-15">

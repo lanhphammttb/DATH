@@ -23,6 +23,8 @@ const SingleProduct = () => {
 
   const [quantity, setQuantity] = useState(1);
 
+  const [available, setAvailable] = useState('');
+
   // const [modalData, setModalData] = useState(null);
 
   const handleQuantityChange = (event) => {
@@ -33,7 +35,14 @@ const SingleProduct = () => {
   useEffect(() => {
     axios
       .get(`/api/sanpham/${id}`)
-      .then((response) => setProduct(response.data[0]))
+      .then((response) => {
+        setProduct(response.data[0]);
+        if (response.data[0].SoLuong === 0) {
+          setAvailable('Hết Hàng');
+        } else {
+          setAvailable('Còn Hàng');
+        }
+      })
       .catch((error) => console.error(error));
   }, [id]);
 
@@ -136,7 +145,7 @@ const SingleProduct = () => {
                 </div> */}
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Sẵn Có:</h3>
-                  <p className="product-data">Còn Hàng</p>
+                  <p className="product-data">{available}</p>
                 </div>
                 <div className="d-flex gap-10 flex-column mt-2 mb-3">
                   <h3 className="product-heading">Size :</h3>

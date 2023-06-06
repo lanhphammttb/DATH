@@ -138,6 +138,22 @@ app.get('/api/sanpham', (req, res) => {
   });
 });
 
+app.get('/api/sanpham/topseller', (req, res) => {
+  const { searchTerm } = req.query;
+  const sql =
+    'SELECT c.MaSP, TenSP, GiaNhap, GiaBan, MaLoaiSP, NSX, MoTa, Image, SUM(c.SoLuong) as topseller FROM SanPham AS s JOIN chitiethoadon AS c ON S.MaSP = C.MaSP GROUP BY TenSP, GiaNhap, GiaBan, MaLoaiSP, NSX, MoTa, Image';
+  connection.query(sql, (error, results, fields) => {
+    if (error) throw error;
+    const updatedResults = results.map((result) => {
+      // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+      // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+      imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+      return { ...result, imageUrl };
+    });
+    res.json(updatedResults);
+  });
+});
+
 //xử lý POST request để tải ảnh lên file ảnh và lưu trữ vào MYSQL
 const fs = require('fs');
 // app.post('/api/sanpham', upload.single('file'), (req, res)=>{

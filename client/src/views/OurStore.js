@@ -7,7 +7,7 @@ import Color from '../components/Color';
 import Container from '../components/Container';
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
-  const [condition, setCondition] = useState('');
+  const [condition, setCondition] = useState('Liên Quan');
   const handleConditionChange = (event) => {
     setCondition(event.target.value);
   };
