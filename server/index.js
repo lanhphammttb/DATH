@@ -224,6 +224,30 @@ app.get('/api/hoadon', (req, res) => {
 
 });
 
+app.put('/api/hoadon/:MaHD', (req, res, feilds) => {
+  let MaHD = req.params.MaHD;
+  let sql = "update hoadon set TinhTrang = ? where MaHD = ?"
+  let value = ['Đã check', MaHD];
+  connection.query(sql, value, (error, results, fields) => {
+    if (error) throw error;
+
+  })
+})
+
+app.get('/api/chitiethoadon/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = `select * from chitiethoadon where MaHD = ${id}`;
+
+  connection.query(sql, (error, result, fields) => {
+    if (error) {
+      res.status(500).json({ error: error });
+    }
+    else {
+      res.status(200).json(result);
+    }
+  })
+})
+
 app.post('/api/hoadon', (req, res) => {
   const { mahd, makh, ngaylaphd, khuyenmai, tongtien, ghichu } = req.body;
 

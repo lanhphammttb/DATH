@@ -875,4 +875,13 @@ footer .input-group-text {
   color: var(--color-777777);
 }
 
+.custom-button {
+  border-radius: 5px;
+  background-color: #F23D97;
+  color: #fff;
+  border: none;
+  min-width: 100px;
+  min-height: 30px;
+}
+
 /* Shipping page ends here */

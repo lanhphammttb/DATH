@@ -8,11 +8,12 @@ import user from "../assets/images/user.svg";
 import cart from "../assets/images/cart.svg";
 import menu from "../assets/images/menu.svg";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
     const u = JSON.parse(localStorage.getItem('user'));
     const welcomeMessage = u?.name;
-
+    const navigate = useNavigate();
     const [state, setState] = useState(true);
     const logout = async () => {
         try {
@@ -22,8 +23,8 @@ const Header = () => {
             localStorage.removeItem('token');
             localStorage.removeItem('chucvu');
             // Chuyển hướng trang về trang đăng nhập
-            window.location.href = '/login';
-
+            navigate('/login');
+            setState(true);
         } catch (error) {
             console.log(error);
         }
@@ -120,7 +121,7 @@ const Header = () => {
                                                 </Link> :
                                                 <Link onClick={(e) => {
                                                     e.preventDefault();
-                                                    setState(state ? false : true)
+                                                    setState(true)
                                                 }}
                                                     to="/login"
                                                     className="d-flex align-items-center gap-10 text-white"
@@ -137,7 +138,7 @@ const Header = () => {
                                         </li>
                                         <li style={{ width: 77, height: 28 }} >
                                             <div style={{ display: state ? "none" : "flex" }}>
-                                                <button onClick={() => logout()} style={{ color: 'red', backgroundColor: '#212529' }}>Đăng xuất</button>
+                                                <button onClick={() => logout()} className="custom-button">Đăng xuất</button>
                                             </div>
                                         </li>
                                     </ul>

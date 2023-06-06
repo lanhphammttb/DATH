@@ -1,41 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Bill.scss';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import axios from "axios";
 
-
-
-
-
-
-const ListBill = (props) => {
-    const [show, setShow] = useState(false);
-    const [data, setData] = useState([]);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        axios.get('http://localhost:8000/api/hoadon')
-            .then(response => {
-                setData(response.data);
-                console.log(response.data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
-    }, []);
-
-
-    const handleCheck = (bill) => {
-        axios.put(`http://localhost:8000/api/hoadon/${bill}`)
-        setData(data.filter(dat => dat.MaHD !== bill))
-    }
-
-    const handleAddProduct = (e) => {
-        e.preventDefault();
-        window.location.href = '/admin/create-bill';
-    };
-
+const Delivering = () => {
     return (
         <div className='container'>
             {/* <div className='mb-3'>
@@ -43,7 +9,7 @@ const ListBill = (props) => {
                     <i class="fas fa-plus"></i>Thêm hoá đơn
                 </button>
             </div> */}
-            <div id="list-bill" >
+            <div  >
                 <table className="table table-striped">
                     <thead>
                         <tr>
@@ -95,4 +61,4 @@ const ListBill = (props) => {
     )
 }
 
-export default ListBill;
+export default Delivering;

@@ -29,6 +29,7 @@ import CreateProduct from "./components/Admin/Product/CreateProduct";
 import ListBill from "./components/Admin/Bill/ListBill";
 import CreateBill from "./components/Admin/Bill/CreateBill";
 import ListTypeProduct from "./components/Admin/ListTypeProduct/ListTypeProduct";
+import ListBills from "./components/Admin/Bill/ListBills";
 function App() {
   const u = JSON.parse(localStorage.getItem('user'));
 
@@ -67,6 +68,7 @@ function App() {
             {/* <Route path="create-product" element={<CreateProduct />} /> */}
             <Route path="list-bill" element={<ListBill />} />
             <Route path="list-type-product" element={<ListTypeProduct />} />
+            <Route path="list-bills" element={<ListBills />} />
           </Route>
         </Routes>
       </BrowserRouter>
