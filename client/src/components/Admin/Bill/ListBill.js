@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Bill.scss';
+import { useNavigate } from 'react-router-dom';
 
 const ListBill = (props) => {
   const [data, setData] = useState([]);
   useEffect(() => {
     axios
-      .get('/api/hoadon')
+      .get('http://localhost:8000/api/hoadon')
       .then((response) => {
         setData(response.data);
         console.log(response.data);
