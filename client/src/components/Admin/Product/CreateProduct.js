@@ -16,7 +16,7 @@ const CreatProduct = (props) => {
   const [mota, setMoTa] = useState('');
   const [file, setFile] = useState('');
   const [imageURL, setImageURL] = useState('');
-  const imageRef = useRef(null);
+  // const imageRef = useRef(null);
   useEffect(() => {
     if (props.product) {
       setMaSP(props.product.MaSP);

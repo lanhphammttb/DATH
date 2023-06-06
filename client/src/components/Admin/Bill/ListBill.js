@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Bill.scss';
-
+import { useNavigate } from 'react-router-dom';
 const ListBill = (props) => {
   const [data, setData] = useState([]);
+  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
   useEffect(() => {
     axios
       .get('/api/hoadon')
@@ -17,9 +19,9 @@ const ListBill = (props) => {
       });
   }, []);
 
-  const handleAddProduct = (e) => {
-    e.preventDefault();
-    window.location.href = '/admin/create-bill';
+  const handleCheck = (id) => {
+    axios.put(`http://localhost:8000/api/hoadon/${id}`);
+    setData(data.filter((data) => data.MaHD !== id));
   };
 
   return (
@@ -45,17 +47,38 @@ const ListBill = (props) => {
           <tbody>
             {data.map((item) => (
               <tr key={item.MaHD}>
-                <td>{item.MaHD}</td>
-                <td>{item.MaKH}</td>
-                <td>{item.formattedDateTime}</td>
-                <td>{item.KhuyenMai}</td>
-                <td>{item.TongTien}</td>
-                <td>{item.GhiChu}</td>
-                <td className="check">
-                  <button className="btn">
-                    Check <i class="fas fa-check"></i>
-                  </button>
-                </td>
+                {item.TinhTrang == 'Chưa check' && (
+                  <>
+                    <td
+                      onClick={() => {
+                        setShow(show ? false : true);
+                        localStorage.removeItem('mahd');
+                        localStorage.setItem('mahd', item.MaHD);
+                        navigate('/admin/list-bills');
+                      }}
+                      style={{
+                        cursor: 'pointer',
+                        color: 'red',
+                        fontWeight: 900,
+                      }}
+                    >
+                      {item.MaHD}
+                    </td>
+                    <td>{item.MaKH}</td>
+                    <td>{item.formattedDateTime}</td>
+                    <td>{item.KhuyenMai}</td>
+                    <td>{item.TongTien}</td>
+                    <td>{item.GhiChu}</td>
+                    <td className="check">
+                      <button
+                        onClick={() => handleCheck(item.MaHD)}
+                        className="btn"
+                      >
+                        Check <i class="fas fa-check"></i>
+                      </button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>

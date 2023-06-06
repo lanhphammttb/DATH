@@ -27,7 +27,9 @@ import ListProduct from './components/Admin/Product/ListProduct';
 import LayoutAdmin from './components/Admin/LayoutAdmin/LayoutAdmin';
 import ListBill from './components/Admin/Bill/ListBill';
 import ListTypeProduct from './components/Admin/ListTypeProduct/ListTypeProduct';
+import ListBills from './components/Admin/Bill/ListBills';
 import { CartProvider } from './CartContext';
+
 function App() {
   // const u = JSON.parse(localStorage.getItem('user'));
 
@@ -67,6 +69,7 @@ function App() {
             {/* <Route path="create-product" element={<CreateProduct />} /> */}
             <Route path="list-bill" element={<ListBill />} />
             <Route path="list-type-product" element={<ListTypeProduct />} />
+            <Route path="list-bills" element={<ListBills />} />
           </Route>
         </Routes>
       </BrowserRouter>

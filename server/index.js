@@ -287,6 +287,25 @@ app.get('/api/sanpham/:id', (req, res) => {
   });
 });
 
+app.get('/api/khachhang/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = `SELECT * FROM khachhang WHERE MaKH = ${id}`;
+  connection.query(sql, (error, results, fields) => {
+    if (error) {
+      res.status(500).json({ error: err });
+    } else {
+      const updatedResults = results.map((result) => {
+        const formattedDateTime = format(
+          new Date(result.NgaySinh),
+          'dd/MM/yyyy HH:mm:ss'
+        );
+        return { ...result, formattedDateTime };
+      });
+      res.status(200).json(updatedResults);
+    }
+  });
+});
+
 app.get('/api/hoadon', (req, res) => {
   const sql = 'SELECT * FROM hoadon';
   connection.query(sql, (error, results, fields) => {
@@ -306,18 +325,16 @@ app.get('/api/hoadon', (req, res) => {
 });
 
 app.post('/api/hoadon', (req, res) => {
-  const { mahd, makh, ngaylaphd, khuyenmai, tongtien, ghichu } = req.body;
-
-  const finalImg = req.body.file;
+  const { makh, ngaylaphd, khuyenmai, tongtien, ghichu, tinhtrang } = req.body;
   connection.query(
     'INSERT INTO hoadon SET ?',
     {
-      MaHD: mahd,
       MaKH: makh,
-      NgayLapHD: ngaylaphd,
-      KhuyenMai: khuyenmai,
+      NgayLapHD: ngaylaphd || '',
+      KhuyenMai: khuyenmai || '',
       TongTien: tongtien,
-      GhiChu: ghichu,
+      GhiChu: ghichu || '',
+      TinhTrang: tinhtrang,
     },
     (error, results) => {
       if (error) {
@@ -329,6 +346,28 @@ app.post('/api/hoadon', (req, res) => {
       }
     }
   );
+});
+
+app.put('/api/hoadon/:id', (req, res, feilds) => {
+  let MaHD = req.params.id;
+  let sql = 'update hoadon set TinhTrang = ? where MaHD = ?';
+  let value = ['Đã check', MaHD];
+  connection.query(sql, value, (error, results, fields) => {
+    if (error) throw error;
+  });
+});
+
+app.get('/api/chitiethoadon/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = `select * from chitiethoadon where MaHD = ${id}`;
+
+  connection.query(sql, (error, result, fields) => {
+    if (error) {
+      res.status(500).json({ error: error });
+    } else {
+      res.status(200).json(result);
+    }
+  });
 });
 
 app.post('/api/logout', (req, res) => {
@@ -346,6 +385,23 @@ app.post('/api/logout', (req, res) => {
 //     res.send(result);
 //   });
 // });
+
+app.post('/api/chitiethoadon', (req, res) => {
+  const { maloaisp, tenloaisp } = req.body;
+  connection.query(
+    'INSERT INTO loaisanpham SET ?',
+    { maloaisp: maloaisp, tenloaisp: tenloaisp },
+    (error, results) => {
+      if (error) {
+        console.error('MySQL error:', error);
+        res.sendStatus(500);
+      } else {
+        // console.log('MySQL success:', results);
+        res.sendStatus(200);
+      }
+    }
+  );
+});
 
 const port = process.env.PORT || 8000;
 

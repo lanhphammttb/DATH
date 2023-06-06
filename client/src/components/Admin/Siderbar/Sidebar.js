@@ -141,8 +141,8 @@ const Sidebar = (props) => {
                     </a>
                   </li>
                   <li style={{ textAlign: 'center' }}>
-                    <button onClick={() => logout()} style={{ color: 'red' }}>
-                      Đăng xuất
+                    <button onClick={() => logout()} className="custom-button">
+                      <b>Đăng xuất</b>
                     </button>
                   </li>
                 </ul>

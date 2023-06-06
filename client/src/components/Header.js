@@ -31,7 +31,7 @@ const Header = () => {
       localStorage.removeItem('token');
       localStorage.removeItem('chucvu');
       // Chuyển hướng trang về trang đăng nhập
-      window.location.href = '/login';
+      navigate('/login');
     } catch (error) {
       console.log(error);
     }
@@ -41,6 +41,12 @@ const Header = () => {
     navigate(search ? `/product/?search=${search}` : '/product');
     setSearchTerm(search);
   };
+
+  const handleLinkClick = () => {
+    // Tải lại toàn bộ trang web
+    window.location.href = '/admin';
+  };
+
   const navigate = useNavigate();
   // const [query, setQuery] = useState('');
   // const submitHandler = (e) => {
@@ -135,7 +141,7 @@ const Header = () => {
                       className="nav-dropdown-title"
                     >
                       {welcomeMessage && isAorN && (
-                        <LinkContainer to="/admin">
+                        <LinkContainer to="/admin" onClick={handleLinkClick}>
                           <NavDropdown.Item>Admin</NavDropdown.Item>
                         </LinkContainer>
                       )}
