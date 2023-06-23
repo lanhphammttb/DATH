@@ -128,10 +128,10 @@ app.get('/api/sanpham', (req, res) => {
     // Lọc danh sách sản phẩm dựa trên searchTerm
     const filteredProducts = searchTerm
       ? updatedResults.filter((product) =>
-          unidecode(product.TenSP.toLowerCase()).includes(
-            unidecode(searchTerm.toLowerCase())
-          )
+        unidecode(product.TenSP.toLowerCase()).includes(
+          unidecode(searchTerm.toLowerCase())
         )
+      )
       : updatedResults;
     // Trả về danh sách sản phẩm dưới dạng JSON
     res.json(filteredProducts);
@@ -156,6 +156,8 @@ app.get('/api/sanpham/topseller', (req, res) => {
 
 //xử lý POST request để tải ảnh lên file ảnh và lưu trữ vào MYSQL
 const fs = require('fs');
+const { error } = require('console');
+const e = require('express');
 // app.post('/api/sanpham', upload.single('file'), (req, res)=>{
 app.post('/api/sanpham', upload.single('file'), (req, res) => {
   const { masp, tensp, soluong, gianhap, giaban, maloaisp, nsx, mota } =
@@ -369,10 +371,12 @@ app.get('/api/chitiethoadon/:id', (req, res) => {
     }
   });
 });
+let isLogin = false;
 
 app.post('/api/logout', (req, res) => {
   // Xóa token khỏi cookie hoặc local storage
   res.clearCookie('token');
+  isLogin = false;
   // Trả về kết quả thành công
   res.json({ success: true });
 });
@@ -385,7 +389,6 @@ app.post('/api/logout', (req, res) => {
 //     res.send(result);
 //   });
 // });
-
 app.post('/api/chitiethoadon', (req, res) => {
   const { maloaisp, tenloaisp } = req.body;
   connection.query(
@@ -398,10 +401,55 @@ app.post('/api/chitiethoadon', (req, res) => {
       } else {
         // console.log('MySQL success:', results);
         res.sendStatus(200);
+        isLogin = true;
       }
     }
   );
 });
+
+app.get('/api/history', (req, res) => {
+
+  const sql = ` SELECT khachhang.MAKH, TENKH, hoadon.MaHD AS MaHD, MaCTHD, chitiethoadon.TongTien AS TONGTIENCTHD, chitiethoadon.SoLuong, TenSP
+  FROM khachhang
+  LEFT JOIN hoadon ON khachhang.MAKH = hoadon.MaKH
+  LEFT JOIN chitiethoadon ON chitiethoadon.MaHD = hoadon.MaHD
+  LEFT JOIN sanpham ON sanpham.MaSP = chitiethoadon.MaSP
+  WHERE khachhang.MAKH = 1`;
+  connection.query(sql, (err, results, field) => {
+    if (err) {
+      console.error(err);
+    }
+    else {
+      res.status(200).json({ results });
+    }
+  })
+})
+
+app.post('/api/signup', (req, res) => {
+  const { user, phone, address, name } = req.body;
+  const sql = "insert into khachhang set ?";
+  connection.query(sql, { TAIKHOAN: user, SDT: phone, DIACHI: address, TENKH: name }, (err, results) => {
+    if (err) {
+      console.error(err);
+    }
+    else {
+      res.status(200);
+    }
+  })
+})
+
+app.post('/api/signupp', (req, res) => {
+  const { name, user, password } = req.body;
+  const sql = "insert into admin set ?";
+  connection.query(sql, { name: name, username: user, password: password, chucvu: "Khách hàng" }, (err, results) => {
+    if (err) {
+      console.error(err);
+    }
+    else {
+      res.status(200);
+    }
+  })
+})
 
 const port = process.env.PORT || 8000;
 

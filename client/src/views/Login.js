@@ -19,12 +19,13 @@ const Login = () => {
       .get('/api/users')
       .then((response) => {
         setData(response.data);
-        console.log(response.data);
+
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();

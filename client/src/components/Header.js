@@ -148,9 +148,11 @@ const Header = () => {
                       <LinkContainer to="/profile">
                         <NavDropdown.Item>Tài Khoản Của Tôi</NavDropdown.Item>
                       </LinkContainer>
-                      <LinkContainer to="/orderhistory">
-                        <NavDropdown.Item>Lịch Sử Mua Hàng</NavDropdown.Item>
-                      </LinkContainer>
+                      {welcomeMessage && isAorN ||
+                        <LinkContainer to="/to-pay">
+                          <NavDropdown.Item>Lịch Sử Mua Hàng</NavDropdown.Item>
+                        </LinkContainer>
+                      }
                       <NavDropdown.Divider />
                       <Link
                         className="dropdown-item"

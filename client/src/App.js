@@ -29,7 +29,7 @@ import ListBill from './components/Admin/Bill/ListBill';
 import ListTypeProduct from './components/Admin/ListTypeProduct/ListTypeProduct';
 import ListBills from './components/Admin/Bill/ListBills';
 import { CartProvider } from './CartContext';
-
+import Headers from './components/Purchase History/Header'
 function App() {
   // const u = JSON.parse(localStorage.getItem('user'));
 
@@ -58,6 +58,7 @@ function App() {
             <Route path="refund-policy" element={<RefundPloicy />} />
             <Route path="shipping-policy" element={<ShippingPolicy />} />
             <Route path="term-conditions" element={<TermAndContions />} />
+            <Route path="to-pay" element={<Headers />} />
           </Route>
         </Routes>
       </BrowserRouter>
