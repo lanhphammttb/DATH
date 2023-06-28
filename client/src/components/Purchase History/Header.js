@@ -1,31 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { React, useEffect, useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+
 
 const Headers = () => {
-
     return (
         <>
-            <div className="container-fuild">
+            <div className="container-fluid">
                 <div className="row">
-
-                    <div className="col-md-2 bg-secondary">
-                    </div>
-                    <div className="col-md-10">
-                        <ul className="nav text-center w-100">
-                            <li className="nav-item bg-light ">
-                                <Link className="nav-link text-dark">Chờ xác nhận</Link>
+                    <div className="col-md-12" style={{ padding: "0px" }}>
+                        <ul className="nav d-flex nav-justified bg-secondary " >
+                            <li className="nav-item mr-4  ">
+                                <Link to='/to-pay' className="nav-link  text-light">Chờ xác nhận</Link>
                             </li>
-                            <li className="nav-item bg-light">
-                                <Link className="nav-link text-dark">Đang vận chuyển</Link>
+                            <li className="nav-item mr-4  ">
+                                <Link to='/to-pay/to-deliveringg' className="nav-link text-light">Đang vận chuyển</Link>
                             </li>
-                            <li className="nav-item bg-light">
-                                <Link className="nav-link text-dark">Hoàn thành</Link>
+                            <li className="nav-item mr-4 ">
+                                <Link to='/to-pay/done' className="nav-link text-light">Hoàn thành</Link>
                             </li>
-                            <li className="nav-item bg-light">
-                                <Link className="nav-link text-dark">Đã huỷ</Link>
+                            <li className="nav-item mr-4  ">
+                                <Link to='/to-pay/to-cancel' className="nav-link text-light">Đã huỷ</Link>
                             </li>
                         </ul>
-
+                        <Outlet />
                     </div>
                 </div>
             </div>

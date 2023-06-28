@@ -6,6 +6,7 @@ const moment = require('moment');
 const { format } = require('date-fns');
 const unidecode = require('unidecode');
 const app = express();
+const currencyFormatter = require('currency-formatter');
 
 app.use(cors());
 
@@ -28,7 +29,9 @@ connection.connect((err) => {
 });
 
 app.get('/api/users', (req, res) => {
-  connection.query('SELECT * FROM admin', (err, results) => {
+  const userr = fs.readFileSync('data.txt', 'utf-8');
+  console.log(userr);
+  connection.query(`SELECT MAKH FROM khachhang WHERE TAIKHOAN =? `, [userr], (err, results) => {
     if (err) {
       res.status(500).json({ error: err });
     } else {
@@ -40,9 +43,9 @@ app.get('/api/users', (req, res) => {
 const jwt = require('jsonwebtoken');
 const secretKey = 'yoursecretkey';
 
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  console.log(username + password);
   connection.query(
     `SELECT * FROM admin WHERE username = ? AND password = ?`,
     [username, password],
@@ -55,6 +58,7 @@ app.post('/api/login', (req, res) => {
         const user = results[0];
         const name = results[0].name;
         const chucvu = results[0].chucvu;
+        fs.writeFileSync('data.txt', username);
         const token = jwt.sign(
           { id: user.id, username: user.username, chucvu: user.chucvu },
           secretKey
@@ -309,7 +313,11 @@ app.get('/api/khachhang/:id', (req, res) => {
 });
 
 app.get('/api/hoadon', (req, res) => {
-  const sql = 'SELECT * FROM hoadon';
+  const sql = `SELECT MaHD,hd.MaKH as MaKH,NgayLapHD,KhuyenMai,TongTien,TinhTrang,GhiChu,khachhang.TENKH as TenKH,khachhang.SDT as SDT
+  from hoadon as hd
+  left join khachhang on hd.MaKH = khachhang.MAKH
+  order by NgayLapHD desc
+  `;
   connection.query(sql, (error, results, fields) => {
     if (error) {
       res.status(500).json({ error: err });
@@ -359,9 +367,32 @@ app.put('/api/hoadon/:id', (req, res, feilds) => {
   });
 });
 
+app.put('/api/delete/:id', (req, res, feilds) => {
+  let MaHD = req.params.id;
+  let sql = 'update hoadon set TinhTrang = ? where MaHD = ?';
+  let value = ['Đã huỷ', MaHD];
+  connection.query(sql, value, (error, results, fields) => {
+    if (error) throw error;
+  });
+});
+app.put('/api/deletes/:id', (req, res, feilds) => {
+  let MaHD = req.params.id;
+  let sql = 'update chitiethoadon set TinhTrang = ? where MaHD = ?';
+  let value = ['Huỷ', MaHD];
+  connection.query(sql, value, (error, results, fields) => {
+    if (error) throw error;
+    else {
+      res.json('Shop huỷ đơn');
+    }
+  });
+});
+
 app.get('/api/chitiethoadon/:id', (req, res) => {
   const id = req.params.id;
-  const sql = `select * from chitiethoadon where MaHD = ${id}`;
+  const sql = `SELECT MaCTHD, chitiethoadon.MaSP as MaSP,chitiethoadon.SoLuong as SoLuong,TongTien,TinhTrang, sanpham.TenSP as TenSP,MaHD,sanpham.SoLuong as Kho
+  from chitiethoadon
+  LEFT join sanpham on chitiethoadon.MaSP = sanpham.MaSP
+  WHERE MaHD = ${id}`;
 
   connection.query(sql, (error, result, fields) => {
     if (error) {
@@ -377,6 +408,7 @@ app.post('/api/logout', (req, res) => {
   // Xóa token khỏi cookie hoặc local storage
   res.clearCookie('token');
   isLogin = false;
+
   // Trả về kết quả thành công
   res.json({ success: true });
 });
@@ -407,20 +439,80 @@ app.post('/api/chitiethoadon', (req, res) => {
   );
 });
 
-app.get('/api/history', (req, res) => {
+app.put('/api/cancel/:id', (req, res) => {
+  let MaCTHD = req.params.id;
+  let sql = `update chitiethoadon set TinhTrang = ? where MaCTHD = ? `;
+  let value = ['Huỷ', MaCTHD];
 
-  const sql = ` SELECT khachhang.MAKH, TENKH, hoadon.MaHD AS MaHD, MaCTHD, chitiethoadon.TongTien AS TONGTIENCTHD, chitiethoadon.SoLuong, TenSP
+  connection.query(sql, value, (err, results) => {
+    if (err) {
+      res.sendStatus(500);
+    }
+    else {
+      res.json('Đã huỷ');
+    }
+  })
+})
+app.put('/api/done/:id', (req, res) => {
+  let MaCTHD = req.params.id;
+  let sql = `update chitiethoadon set TinhTrang = ? where MaCTHD = ? `;
+  let value = ['Đã giao hàng', MaCTHD];
+
+  connection.query(sql, value, (err, results) => {
+    if (err) {
+      res.sendStatus(500);
+    }
+    else {
+      res.json('Huỷ đơn thành công');
+    }
+  })
+})
+app.put('/api/ship/:id', (req, res) => {
+  let MaHD = req.params.id;
+  let sql = `update chitiethoadon set TinhTrang = ? where MaHD = ? `;
+  let value = ['Đang giao hàng', MaHD];
+
+  connection.query(sql, value, (err, results) => {
+    if (err) {
+      res.sendStatus(500);
+    }
+    else {
+      res.json('Huỷ đơn thành công');
+    }
+  })
+})
+app.post('/api/history', (req, res) => {
+  const { MaKH } = req.body;
+  const sql = ` SELECT khachhang.MAKH, TENKH, hoadon.MaHD AS MaHD, MaCTHD, chitiethoadon.TongTien AS TONGTIENCTHD, chitiethoadon.SoLuong, TenSP,  Image,sanpham.GiaBan as Gia,hoadon.NgayLapHD as NgayLapHD,chitiethoadon.TinhTrang as TinhTrang
   FROM khachhang
   LEFT JOIN hoadon ON khachhang.MAKH = hoadon.MaKH
   LEFT JOIN chitiethoadon ON chitiethoadon.MaHD = hoadon.MaHD
   LEFT JOIN sanpham ON sanpham.MaSP = chitiethoadon.MaSP
-  WHERE khachhang.MAKH = 1`;
+  WHERE khachhang.MAKH = ${MaKH}
+  order by NgayLapHD desc`;
   connection.query(sql, (err, results, field) => {
     if (err) {
       console.error(err);
     }
     else {
-      res.status(200).json({ results });
+      const updatedResults = results.map((result) => {
+        // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+        // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+        imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+        return { ...result, imageUrl };
+      });
+      const updatedResult = updatedResults.map((result) => {
+        const formattedDateTime = format(
+          new Date(result.NgayLapHD),
+          'dd/MM/yyyy HH:mm:ss'
+        );
+        return { ...result, formattedDateTime };
+      });
+      const money = updatedResult.map((result) => {
+        const moneyy = currencyFormatter.format(result.Gia, { code: 'VND', precision: 0, symbol: '₫' });
+        return { ...result, moneyy }
+      });
+      res.json(money);
     }
   })
 })
@@ -450,6 +542,8 @@ app.post('/api/signupp', (req, res) => {
     }
   })
 })
+
+
 
 const port = process.env.PORT || 8000;
 

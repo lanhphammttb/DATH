@@ -3,7 +3,7 @@ import BreadCrumb from '../components/BreadCrumb';
 import Meta from '../components/Meta';
 import Container from '../components/Container';
 import axios from 'axios';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
@@ -11,20 +11,7 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const [data, setData] = useState([]);
-  // const isAdmin = true;
-  useEffect(() => {
-    axios
-      .get('/api/users')
-      .then((response) => {
-        setData(response.data);
-
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+  const [login, setLogin] = useState(true);
 
 
   const handleSubmit = (event) => {
@@ -48,13 +35,13 @@ const Login = () => {
           window.location.href = '/';
           // isAdmin = false;
         }
+        localStorage.setItem('username', username);
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
+        setLogin(false);
       });
   };
 
-  const pushMenuRef = useRef(null);
 
   // const isVisible = (e) => {
   //   e.preventDefault();
@@ -88,7 +75,7 @@ const Login = () => {
         <div className="row">
           <div className="col-12">
             <div className="auth-card">
-              <h3 className="text-center mb-3">Login</h3>
+              <h3 className="text-center mb-3">Đăng nhập</h3>
               <form
                 onSubmit={handleSubmit}
                 action=""
@@ -100,7 +87,7 @@ const Login = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   type="email"
                   name="email"
-                  placeholder="Email"
+                  placeholder="Tài khoản"
                   className=" form-control input"
                 />
                 <div
@@ -112,7 +99,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     type={status ? 'text' : 'password'}
                     name="password"
-                    placeholder="Password"
+                    placeholder="Mật khẩu"
                     className=" form-control input"
                     id="password"
                   />
@@ -127,8 +114,8 @@ const Login = () => {
                   />
                 </div>
                 <div>
+                  {login || <p style={{ color: 'red' }} className='text-center'>Sai tài khoản hoặc mật khẩu</p>}
                   <Link to="/forgot-password">Forgot Password?</Link>
-
                   <div className="mt-3 d-flex justify-content-center gap-15 align-items-center">
                     <button
                       className="button border-0"
@@ -137,10 +124,10 @@ const Login = () => {
                         // e.preventDefault();
                       }}
                     >
-                      Login
+                      Đăng nhập
                     </button>
                     <Link to="/signup" className="button signup">
-                      SignUp
+                      Đăng ký
                     </Link>
                   </div>
                 </div>

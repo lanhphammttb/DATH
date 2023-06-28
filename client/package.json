@@ -15,6 +15,7 @@
     "dotenv": "^16.0.3",
     "font-awesome": "^4.7.0",
     "moment": "^2.29.4",
+    "number-format.js": "^2.0.9",
     "react": "^18.2.0",
     "react-bootstrap": "2.7.2",
     "react-dom": "^18.2.0",

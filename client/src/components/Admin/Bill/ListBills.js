@@ -10,8 +10,6 @@ const ListBills = () => {
         axios.get(`http://localhost:8000/api/chitiethoadon/${MaHD}`)
             .then(response => {
                 setData(response.data)
-                console.log(response.data)
-                debugger
             }
             )
             .catch(error => {
@@ -22,25 +20,27 @@ const ListBills = () => {
 
     return (
 
-        <div className='container'>
-            <div id="list-bills" >
+        <div className='container '>
+            <div id="list-bills" style={{ width: "100%" }} >
                 <table className="table table-striped">
                     <thead>
                         <tr>
                             <th>Mã chi tiết hoá đơn</th>
-                            <th>Mã hoá đơn</th>
                             <th>Mã sản phẩm</th>
-                            <th>Số Lượng</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số Lượng Đặt</th>
+                            <th>Kho</th>
                             <th>Tổng tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         {data.map(item => (
                             <tr key={item.MaCTHD}>
-                                <td>{item.MaCTHD}</td>
-                                <td>{item.MaHD}</td>
+                                <td>#{item.MaCTHD}</td>
                                 <td>{item.MaSP}</td>
+                                <td>{item.TenSP}</td>
                                 <td>{item.SoLuong}</td>
+                                <td>{item.Kho}</td>
                                 <td>{item.TongTien}</td>
 
                             </tr>

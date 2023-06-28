@@ -60,7 +60,7 @@ const Checkout = () => {
 
   return (
     <>
-      <Container class1="checkout-wrapper py-5 home-wrapper-2">
+      <Container className="checkout-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-7">
             <div className="checkout-left-data">
@@ -122,7 +122,7 @@ const Checkout = () => {
                 </div>
                 <div className="w-100">
                   <form>
-                    <h4 class="title total">
+                    <h4 className="title total">
                       Tỉnh/Thành phố, Quận/Huyện, Phường/Xã
                     </h4>
                     <AddressForm onChange={handleAddressChange} />
@@ -138,7 +138,7 @@ const Checkout = () => {
                   <div>{address.ward ? address.ward.label : ''}</div>
                 </div>
                 <div className="w-100">
-                  <h4 class="title total">Địa chỉ cụ thể</h4>
+                  <h4 className="title total">Địa chỉ cụ thể</h4>
                   <input
                     type="text"
                     placeholder="Tên đường, Tòa nhà, Số nhà."
