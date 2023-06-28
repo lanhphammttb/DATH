@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { BsSearch } from 'react-icons/bs';
 // import { useState } from 'react';
@@ -23,6 +23,20 @@ const Header = () => {
   const welcomeMessage = u?.name;
   const chucvu = localStorage.getItem('chucvu');
   const isAorN = chucvu === 'Nhân viên' || chucvu === 'Admin';
+  const [makh, setMakh] = useState('');
+  useEffect(() => {
+    if (localStorage.getItem('chucvu') === 'Khách hàng') {
+      axios
+        .get('/api/users')
+        .then((res) => {
+          setMakh(res.data.users[0].MAKH);
+          localStorage.setItem('makh', res.data.users[0].MAKH);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, []);
   const logout = async () => {
     try {
       await axios.post('/api/logout');
@@ -148,11 +162,11 @@ const Header = () => {
                       <LinkContainer to="/profile">
                         <NavDropdown.Item>Tài Khoản Của Tôi</NavDropdown.Item>
                       </LinkContainer>
-                      {welcomeMessage && isAorN ||
+                      {(welcomeMessage && isAorN) || (
                         <LinkContainer to="/to-pay">
                           <NavDropdown.Item>Lịch Sử Mua Hàng</NavDropdown.Item>
                         </LinkContainer>
-                      }
+                      )}
                       <NavDropdown.Divider />
                       <Link
                         className="dropdown-item"

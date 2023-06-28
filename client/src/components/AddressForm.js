@@ -67,14 +67,13 @@ const AddressForm = (props) => {
     };
     fetchWards();
   }, [selectedDistrict]);
-
   useEffect(() => {
     props.onChange({
       province: selectedProvince,
       district: selectedDistrict,
       ward: watch('ward'),
     });
-  }, [selectedProvince, selectedDistrict, watch, props]);
+  }, [selectedProvince, selectedDistrict, watch('ward'), props.onChange]);
 
   return (
     <div style={{ display: 'flex' }}>

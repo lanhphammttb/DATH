@@ -1,61 +1,108 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { BiArrowBack } from 'react-icons/bi';
 import Container from '../components/Container';
 import { CartContext } from '../CartContext';
 import AddressForm from '../components/AddressForm';
 import axios from 'axios';
+// import { add } from 'date-fns';
 const Checkout = () => {
   const { cartItems, totalPrice } = useContext(CartContext);
   const [address, setAddress] = useState({});
   const [customer, setCustomer] = useState({});
   const [invoice, setInvoice] = useState({});
+  const [name, setName] = useState('');
+  const [numberPhone, setNumberphone] = useState('');
+  const [addressDetail, setDetailAddress] = useState('');
   const [invoiceDetails, setInvoiceDetails] = useState([]);
-  const handleAddressChange = (newAddress) => {
+  const makh = localStorage.getItem('makh');
+  const handleAddressChange = useCallback((newAddress) => {
     setAddress(newAddress);
+  }, []); // Xóa các giá trị phụ thuộc để chỉ gọi lại khi component được render lần đầu tiên
+
+  const handleNameChange = (event) => {
+    if (event.target.value) {
+      setName(event.target.value);
+    } else {
+      setName('');
+    }
   };
+
+  const handleNumberPhoneChange = (event) => {
+    if (event.target.value) {
+      setNumberphone(event.target.value);
+    } else {
+      setNumberphone('');
+    }
+  };
+
+  const handleDetailAddressChange = (event) => {
+    if (event.target.value) {
+      setDetailAddress(
+        event.target.value +
+          ', ' +
+          address.ward.label +
+          ', ' +
+          address.district.label +
+          ', ' +
+          address.province.label
+      );
+    } else {
+      setDetailAddress('');
+    }
+  };
+
   // const { id } = useState('1');
   useEffect(() => {
     const fetchKhachHang = async () => {
       try {
-        const response = await axios.get(`/api/khachhang/1`);
+        const response = await axios.get(`/api/khachhang/${makh}`);
         setCustomer(response.data[0]);
-        console.log(customer);
+        // console.log(customer);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchKhachHang();
+    setInvoice({
+      makh: makh,
+      tennguoinhan: name,
+      diachinhanhang: addressDetail,
+      sdtnguoinhan: numberPhone,
+      khuyenmai: '1',
+      tongtien: totalPrice,
+      ghichu: 'ko',
+      tinhtrang: 'Chưa check',
+    });
+    setInvoiceDetails(
+      cartItems.map((item) => ({
+        masp: item.MaSP,
+        soluong: item.quantity,
+        tongtien: item.prices,
+      }))
+    );
+  }, [cartItems, totalPrice, name, numberPhone, addressDetail]);
 
-    setInvoice(customer.MaKH, '', totalPrice, '', 'Chưa check');
-    setInvoiceDetails(cartItems.MaSP);
-    console.log(invoice);
-    console.log(invoiceDetails);
-  }, []);
-
-  const handleOrder = (invoice, invoiceDetails) => {
-    // const post = async (invoice, invoiceDetails) => {
-    //   try {
-    //     // Tạo mới Hóa đơn
-    //     const invoiceResponse = await axios.post('/api/hoadon', invoice);
-    //     const invoiceId = invoiceResponse.data.id;
-    //     // Tạo mới danh sách Chi tiết hóa đơn
-    //     const invoiceDetailPromises = invoiceDetails.map((invoiceDetail) => {
-    //       invoiceDetail.invoiceId = invoiceId;
-    //       return axios.post('/api/chitiethoadon', invoiceDetail);
-    //     });
-    //     const invoiceDetailResponses = await Promise.all(invoiceDetailPromises);
-    //     console.log('Tạo mới Hóa đơn thành công:', invoiceResponse.data);
-    //     console.log(
-    //       'Tạo mới Chi tiết hóa đơn thành công:',
-    //       invoiceDetailResponses.map((response) => response.data)
-    //     );
-    //   } catch (error) {
-    //     console.error('Lỗi khi tạo mới Hóa đơn và Chi tiết hóa đơn:', error);
-    //   }
-    // };
-    // post(invoice, invoiceDetails);
+  const handleOrder = async () => {
+    try {
+      // Tạo mới Hóa đơn
+      const invoiceResponse = await axios.post('/api/hoadon', invoice);
+      const invoiceId = invoiceResponse.data.mahd;
+      // Tạo mới danh sách Chi tiết hóa đơn
+      const invoiceDetailPromises = invoiceDetails.map((invoiceDetail) => {
+        const newInvoiceDetail = { ...invoiceDetail, mahd: invoiceId };
+        return axios.post('/api/chitiethoadon', newInvoiceDetail);
+      });
+      const invoiceDetailResponses = await Promise.all(invoiceDetailPromises);
+      console.log('Tạo mới Hóa đơn thành công:', invoiceResponse.data);
+      console.log(
+        'Tạo mới Chi tiết hóa đơn thành công:',
+        invoiceDetailResponses.map((response) => response.data)
+      );
+    } catch (error) {
+      console.error('Lỗi khi tạo mới Hóa đơn và Chi tiết hóa đơn:', error);
+    }
   };
 
   return (
@@ -97,7 +144,7 @@ const Checkout = () => {
               </nav>
               <h4 className="title total">Thông tin liên lạc</h4>
               <p className="user-details total">
-                {customer.TenKH} <nbsp /> ({customer.Email})
+                {customer.TenKH} <nbsp /> ({customer.TAIKHOAN})
               </p>
               <h4 className="mb-3">Địa chỉ nhận hàng</h4>
               <form
@@ -107,15 +154,17 @@ const Checkout = () => {
                 <div className="flex-grow-1">
                   <input
                     type="text"
-                    value={customer.TenKH}
+                    defaultValue={name}
                     placeholder="Họ và tên"
                     className="form-control"
+                    onChange={handleNameChange}
                   />
                 </div>
                 <div className="flex-grow-1">
                   <input
                     type="text"
-                    value={customer.SDT}
+                    defaultValue={numberPhone}
+                    onChange={handleNumberPhoneChange}
                     placeholder="Số điện thoại"
                     className="form-control"
                   />
@@ -141,8 +190,10 @@ const Checkout = () => {
                   <h4 class="title total">Địa chỉ cụ thể</h4>
                   <input
                     type="text"
-                    placeholder="Tên đường, Tòa nhà, Số nhà."
                     className="form-control"
+                    placeholder="Tên đường, Tòa nhà, Số nhà."
+                    defaultValue={addressDetail}
+                    onChange={handleDetailAddressChange}
                   />
                 </div>
                 {/* <div className="flex-grow-1">
@@ -175,11 +226,7 @@ const Checkout = () => {
                     <Link to="/cart" className="button">
                       Tiếp tục mua sắm
                     </Link>
-                    <Link
-                      to="/order"
-                      className="button"
-                      onClick={handleOrder(invoice, invoiceDetails)}
-                    >
+                    <Link to="/order" className="button" onClick={handleOrder}>
                       Đặt hàng
                     </Link>
                   </div>

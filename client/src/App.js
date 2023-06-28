@@ -23,13 +23,14 @@ import TermAndContions from './views/TermAndContions';
 import SingleProduct from './views/SingleProduct';
 import Cart from './views/Cart';
 import Checkout from './views/Checkout';
+import Order from './views/Order';
 import ListProduct from './components/Admin/Product/ListProduct';
 import LayoutAdmin from './components/Admin/LayoutAdmin/LayoutAdmin';
 import ListBill from './components/Admin/Bill/ListBill';
 import ListTypeProduct from './components/Admin/ListTypeProduct/ListTypeProduct';
 import ListBills from './components/Admin/Bill/ListBills';
 import { CartProvider } from './CartContext';
-import Headers from './components/Purchase History/Header'
+import Headers from './components/Purchase History/Header';
 function App() {
   // const u = JSON.parse(localStorage.getItem('user'));
 
@@ -48,6 +49,7 @@ function App() {
             <Route path="blog/:id" element={<SingleBlog />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="order" element={<Order />} />
             <Route path="compare-product" element={<CompareProduct />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="login" element={<Login />} />
