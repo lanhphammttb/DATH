@@ -472,7 +472,15 @@ app.post('/api/history', (req, res) => {
         });
         return { ...result, moneyy };
       });
-      res.json(money);
+      const money2 = money.map((result) => {
+        const moneyy2 = currencyFormatter.format(result.TONGTIENCTHD, {
+          code: 'VND',
+          precision: 0,
+          symbol: '₫',
+        });
+        return { ...result, moneyy2 };
+      });
+      res.json(money2);
     }
   });
 });
@@ -510,16 +518,21 @@ app.post('/api/signupp', (req, res) => {
 });
 
 app.post('/api/chitiethoadon', (req, res) => {
-  const { maloaisp, tenloaisp } = req.body;
+  const { mahd, masp, soluong, tongtien } = req.body;
   connection.query(
-    'INSERT INTO loaisanpham SET ?',
-    { maloaisp: maloaisp, tenloaisp: tenloaisp },
+    'INSERT INTO chitiethoadon SET ?',
+    {
+      MaHD: mahd,
+      MaSP: masp,
+      SoLuong: soluong,
+      TongTien: tongtien,
+    },
     (error, results) => {
       if (error) {
         console.error('MySQL error:', error);
         res.sendStatus(500);
       } else {
-        // console.log('MySQL success:', results);
+        console.log('Thêm chi tiết hóa đơn thành công');
         res.sendStatus(200);
       }
     }
@@ -635,7 +648,7 @@ app.post('/api/signupp', (req, res) => {
   );
 });
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

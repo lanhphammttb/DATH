@@ -29,7 +29,7 @@ const ProductCard = (props) => {
   };
 
   const fetchProducts = async () => {
-    let url = 'http://localhost:8000/api/sanpham';
+    let url = '/api/sanpham';
     let config = {};
     if (searchTerm) {
       config.params = { searchTerm };

@@ -12,7 +12,6 @@ const ListBill = (props) => {
       .then((response) => {
         setData(response.data);
         console.log(response.data);
-
       })
       .catch((error) => {
         console.error(error);
@@ -20,12 +19,12 @@ const ListBill = (props) => {
   }, []);
 
   const handleCheck = (id) => {
-    axios.put(`http://localhost:8000/api/hoadon/${id}`);
+    axios.put(`/api/hoadon/${id}`);
     axios.put(`/api/ship/${id}`);
     setData(data.filter((data) => data.MaHD !== id));
   };
   const handleDelete = (id) => {
-    axios.put(`http://localhost:8000/api/delete/${id}`);
+    axios.put(`/api/delete/${id}`);
     setData(data.filter((data) => data.MaHD !== id));
     axios.put(`/api/deletes/${id}`);
   };
@@ -37,10 +36,10 @@ const ListBill = (props) => {
                     <i class="fas fa-plus"></i>Thêm hoá đơn
                 </button>
             </div> */}
-      <div id="list-bill" style={{ width: "100%" }}>
+      <div id="list-bill" style={{ width: '100%' }}>
         <table className="table table-striped">
           <thead>
-            <tr className='text-center'>
+            <tr className="text-center">
               <th>Mã hoá đơn</th>
               <th>Tên khách hàng</th>
               <th>Số điện thoại</th>
@@ -52,7 +51,7 @@ const ListBill = (props) => {
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item.MaHD} className='text-center'>
+              <tr key={item.MaHD} className="text-center">
                 {item.TinhTrang == 'Chưa check' && (
                   <>
                     <td

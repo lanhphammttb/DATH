@@ -144,7 +144,7 @@ const Checkout = () => {
               </nav>
               <h4 className="title total">Thông tin liên lạc</h4>
               <p className="user-details total">
-                {customer.TenKH} <nbsp /> ({customer.TAIKHOAN})
+                {/* {customer.TenKH} <nbsp /> ({customer.TAIKHOAN}) */}
               </p>
               <h4 className="mb-3">Địa chỉ nhận hàng</h4>
               <form

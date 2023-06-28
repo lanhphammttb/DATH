@@ -16,7 +16,6 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
-import { useEffect } from 'react';
 const Header = () => {
   const { cartCount, totalPrice, setSearchTerm } = useContext(CartContext);
   const [search, setSearch] = useState('');
@@ -24,6 +23,20 @@ const Header = () => {
   const welcomeMessage = u?.name;
   const chucvu = localStorage.getItem('chucvu');
   const isAorN = chucvu === 'Nhân viên' || chucvu === 'Admin';
+  const [makh, setMakh] = useState('');
+  useEffect(() => {
+    if (localStorage.getItem('chucvu') === 'Khách hàng') {
+      axios
+        .get('/api/users')
+        .then((res) => {
+          setMakh(res.data.users[0].MAKH);
+          localStorage.setItem('makh', res.data.users[0].MAKH);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, []);
   const logout = async () => {
     try {
       await axios.post('/api/logout');
@@ -39,6 +52,7 @@ const Header = () => {
       console.log(error);
     }
   };
+
   const handleSearch = (e) => {
     e.preventDefault();
     navigate(search ? `/product/?search=${search}` : '/product');
