@@ -119,12 +119,6 @@ const Sidebar = (props) => {
                   <li class="nav-item">
                     <a href="pages/tables/data.html" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
-                      <p>Đơn hàng đang xử lý</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="pages/tables/data.html" class="nav-link">
-                      <i class="far fa-circle nav-icon"></i>
                       <p>Đang giao cho khách</p>
                     </a>
                   </li>

@@ -7,6 +7,7 @@ const { format } = require('date-fns');
 const unidecode = require('unidecode');
 const fs = require('fs');
 const app = express();
+const currencyFormatter = require('currency-formatter');
 
 app.use(cors());
 
@@ -315,7 +316,11 @@ app.get('/api/khachhang/:id', (req, res) => {
 });
 
 app.get('/api/hoadon', (req, res) => {
-  const sql = 'SELECT * FROM hoadon';
+  const sql = `SELECT MaHD,hd.MaKH as MaKH,NgayLapHD,KhuyenMai,TongTien,TinhTrang,GhiChu,khachhang.TENKH as TenKH,khachhang.SDT as SDT
+  from hoadon as hd
+  left join khachhang on hd.MaKH = khachhang.MAKH
+  order by NgayLapHD desc
+  `;
   connection.query(sql, (error, results, fields) => {
     if (error) {
       res.status(500).json({ error: err });
@@ -379,31 +384,31 @@ app.put('/api/hoadon/:id', (req, res, feilds) => {
   });
 });
 
-app.post('/api/chitiethoadon', (req, res) => {
-  const { mahd, masp, soluong, tongtien } = req.body;
-  connection.query(
-    'INSERT INTO chitiethoadon SET ?',
-    {
-      MaHD: mahd,
-      MaSP: masp,
-      SoLuong: soluong,
-      TongTien: tongtien,
-    },
-    (error, results) => {
-      if (error) {
-        console.error('MySQL error:', error);
-        res.sendStatus(500);
-      } else {
-        console.log('Thêm chi tiết hóa đơn thành công');
-        res.sendStatus(200);
-      }
-    }
-  );
+app.put('/api/delete/:id', (req, res, feilds) => {
+  let MaHD = req.params.id;
+  let sql = 'update hoadon set TinhTrang = ? where MaHD = ?';
+  let value = ['Đã huỷ', MaHD];
+  connection.query(sql, value, (error, results, fields) => {
+    if (error) throw error;
+  });
 });
-
+app.put('/api/deletes/:id', (req, res, feilds) => {
+  let MaHD = req.params.id;
+  let sql = 'update chitiethoadon set TinhTrang = ? where MaHD = ?';
+  let value = ['Huỷ', MaHD];
+  connection.query(sql, value, (error, results, fields) => {
+    if (error) throw error;
+    else {
+      res.json('Shop huỷ đơn');
+    }
+  });
+});
 app.get('/api/chitiethoadon/:id', (req, res) => {
   const id = req.params.id;
-  const sql = `select * from chitiethoadon where MaHD = ${id}`;
+  const sql = `SELECT MaCTHD, chitiethoadon.MaSP as MaSP,chitiethoadon.SoLuong as SoLuong,TongTien,TinhTrang, sanpham.TenSP as TenSP,MaHD,sanpham.SoLuong as Kho
+  from chitiethoadon
+  LEFT join sanpham on chitiethoadon.MaSP = sanpham.MaSP
+  WHERE MaHD = ${id}`;
 
   connection.query(sql, (error, result, fields) => {
     if (error) {
@@ -419,6 +424,7 @@ app.post('/api/logout', (req, res) => {
   // Xóa token khỏi cookie hoặc local storage
   res.clearCookie('token');
   isLogin = false;
+
   // Trả về kết quả thành công
   res.json({ success: true });
 });
@@ -515,6 +521,115 @@ app.post('/api/chitiethoadon', (req, res) => {
       } else {
         // console.log('MySQL success:', results);
         res.sendStatus(200);
+      }
+    }
+  );
+});
+app.put('/api/cancel/:id', (req, res) => {
+  let MaCTHD = req.params.id;
+  let sql = `update chitiethoadon set TinhTrang = ? where MaCTHD = ? `;
+  let value = ['Huỷ', MaCTHD];
+
+  connection.query(sql, value, (err, results) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      res.json('Đã huỷ');
+    }
+  });
+});
+app.put('/api/done/:id', (req, res) => {
+  let MaCTHD = req.params.id;
+  let sql = `update chitiethoadon set TinhTrang = ? where MaCTHD = ? `;
+  let value = ['Đã giao hàng', MaCTHD];
+
+  connection.query(sql, value, (err, results) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      res.json('Huỷ đơn thành công');
+    }
+  });
+});
+app.put('/api/ship/:id', (req, res) => {
+  let MaHD = req.params.id;
+  let sql = `update chitiethoadon set TinhTrang = ? where MaHD = ? `;
+  let value = ['Đang giao hàng', MaHD];
+
+  connection.query(sql, value, (err, results) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      res.json('Huỷ đơn thành công');
+    }
+  });
+});
+app.get('/api/history', (req, res) => {
+  const { MaKH } = req.body;
+  const sql = ` SELECT khachhang.MAKH, TENKH, hoadon.MaHD AS MaHD, MaCTHD, chitiethoadon.TongTien AS TONGTIENCTHD, chitiethoadon.SoLuong, TenSP
+  FROM khachhang
+  LEFT JOIN hoadon ON khachhang.MAKH = hoadon.MaKH
+  LEFT JOIN chitiethoadon ON chitiethoadon.MaHD = hoadon.MaHD
+  LEFT JOIN sanpham ON sanpham.MaSP = chitiethoadon.MaSP
+  WHERE khachhang.MAKH  = ${MaKH}
+  order by NgayLapHD desc`;
+  connection.query(sql, (err, results, field) => {
+    if (err) {
+      console.error(err);
+    } else {
+      const updatedResults = results.map((result) => {
+        // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+        // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+        imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+        return { ...result, imageUrl };
+      });
+      const updatedResult = updatedResults.map((result) => {
+        const formattedDateTime = format(
+          new Date(result.NgayLapHD),
+          'dd/MM/yyyy HH:mm:ss'
+        );
+        return { ...result, formattedDateTime };
+      });
+      const money = updatedResult.map((result) => {
+        const moneyy = currencyFormatter.format(result.Gia, {
+          code: 'VND',
+          precision: 0,
+          symbol: '₫',
+        });
+        return { ...result, moneyy };
+      });
+      res.json(money);
+    }
+  });
+});
+
+app.post('/api/signup', (req, res) => {
+  const { user, phone, address, name } = req.body;
+  const sql = 'insert into khachhang set ?';
+  connection.query(
+    sql,
+    { TAIKHOAN: user, SDT: phone, DIACHI: address, TENKH: name },
+    (err, results) => {
+      if (err) {
+        console.error(err);
+      } else {
+        res.status(200);
+      }
+    }
+  );
+});
+
+app.post('/api/signupp', (req, res) => {
+  const { name, user, password } = req.body;
+  const sql = 'insert into admin set ?';
+  connection.query(
+    sql,
+    { name: name, username: user, password: password, chucvu: 'Khách hàng' },
+    (err, results) => {
+      if (err) {
+        console.error(err);
+      } else {
+        res.status(200);
       }
     }
   );

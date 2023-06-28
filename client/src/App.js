@@ -30,7 +30,11 @@ import ListBill from './components/Admin/Bill/ListBill';
 import ListTypeProduct from './components/Admin/ListTypeProduct/ListTypeProduct';
 import ListBills from './components/Admin/Bill/ListBills';
 import { CartProvider } from './CartContext';
+import Confirm from './components/Purchase History/Confirm';
 import Headers from './components/Purchase History/Header';
+import Canceled from './components/Purchase History/Canceled';
+import Deliveringg from './components/Purchase History/Deliveringg';
+import Done from './components/Purchase History/Done';
 function App() {
   // const u = JSON.parse(localStorage.getItem('user'));
 
@@ -60,7 +64,12 @@ function App() {
             <Route path="refund-policy" element={<RefundPloicy />} />
             <Route path="shipping-policy" element={<ShippingPolicy />} />
             <Route path="term-conditions" element={<TermAndContions />} />
-            <Route path="to-pay" element={<Headers />} />
+            <Route path="to-pay" element={<Headers />}>
+              <Route index element={<Confirm />} />
+              <Route path="to-cancel" element={<Canceled />} />
+              <Route path="to-deliveringg" element={<Deliveringg />} />
+              <Route path="done" element={<Done />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

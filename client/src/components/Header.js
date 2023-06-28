@@ -16,6 +16,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
+import { useEffect } from 'react';
 const Header = () => {
   const { cartCount, totalPrice, setSearchTerm } = useContext(CartContext);
   const [search, setSearch] = useState('');
@@ -23,20 +24,6 @@ const Header = () => {
   const welcomeMessage = u?.name;
   const chucvu = localStorage.getItem('chucvu');
   const isAorN = chucvu === 'Nhân viên' || chucvu === 'Admin';
-  const [makh, setMakh] = useState('');
-  useEffect(() => {
-    if (localStorage.getItem('chucvu') === 'Khách hàng') {
-      axios
-        .get('/api/users')
-        .then((res) => {
-          setMakh(res.data.users[0].MAKH);
-          localStorage.setItem('makh', res.data.users[0].MAKH);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  }, []);
   const logout = async () => {
     try {
       await axios.post('/api/logout');
@@ -44,6 +31,8 @@ const Header = () => {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('chucvu');
+      localStorage.removeItem('username');
+      localStorage.removeItem('makh');
       // Chuyển hướng trang về trang đăng nhập
       navigate('/login');
     } catch (error) {
@@ -73,9 +62,9 @@ const Header = () => {
         <div className="container-xxl">
           <div className="row">
             <div className="col-6">
-              <div class="flex-col hide-for-medium flex-left">
-                <ul class="nav nav-left medium-nav-center nav-small  nav-divided">
-                  <li class="html custom html_topbar_left">
+              <div className="flex-col hide-for-medium flex-left">
+                <ul className="nav nav-left medium-nav-center nav-small  nav-divided">
+                  <li className="html custom html_topbar_left">
                     <p className="text-end text-white mb-0">
                       <i class="fa fa-map-marker mr-2"></i>Địa chỉ: 55 Giải
                       Phóng, Hai Bà Trưng, Hà Nội
@@ -86,7 +75,7 @@ const Header = () => {
             </div>
             <div className="col-6">
               <p className="text-end text-white mb-0">
-                <i class="fa fa-phone mr-2"></i>Hotline:
+                <i className="fa fa-phone mr-2"></i>Hotline:
                 <a className="text-white" href="tel:+91 8264954234">
                   +91 8264954234
                 </a>
@@ -100,7 +89,9 @@ const Header = () => {
           <div className="row align-items-center">
             <div className="col-2">
               <h2>
-                <Link className="text-white">Vinh Quang</Link>
+                <Link to="/" className="text-white">
+                  Vinh Quang
+                </Link>
               </h2>
             </div>
             <Form className="col-5" onSubmit={(e) => handleSearch(e)}>

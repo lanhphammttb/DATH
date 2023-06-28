@@ -12,7 +12,7 @@ const ListBill = (props) => {
       .then((response) => {
         setData(response.data);
         console.log(response.data);
-        console.log('A');
+
       })
       .catch((error) => {
         console.error(error);
@@ -21,7 +21,13 @@ const ListBill = (props) => {
 
   const handleCheck = (id) => {
     axios.put(`http://localhost:8000/api/hoadon/${id}`);
+    axios.put(`/api/ship/${id}`);
     setData(data.filter((data) => data.MaHD !== id));
+  };
+  const handleDelete = (id) => {
+    axios.put(`http://localhost:8000/api/delete/${id}`);
+    setData(data.filter((data) => data.MaHD !== id));
+    axios.put(`/api/deletes/${id}`);
   };
 
   return (
@@ -31,14 +37,14 @@ const ListBill = (props) => {
                     <i class="fas fa-plus"></i>Thêm hoá đơn
                 </button>
             </div> */}
-      <div id="list-bill">
+      <div id="list-bill" style={{ width: "100%" }}>
         <table className="table table-striped">
           <thead>
-            <tr>
+            <tr className='text-center'>
               <th>Mã hoá đơn</th>
-              <th>Mã khách hàng</th>
+              <th>Tên khách hàng</th>
+              <th>Số điện thoại</th>
               <th>Ngày lập hoá đơn</th>
-              <th>Khuyến mãi</th>
               <th>Tổng tiền</th>
               <th>Ghi chú</th>
               <th>Action</th>
@@ -46,7 +52,7 @@ const ListBill = (props) => {
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item.MaHD}>
+              <tr key={item.MaHD} className='text-center'>
                 {item.TinhTrang == 'Chưa check' && (
                   <>
                     <td
@@ -62,19 +68,25 @@ const ListBill = (props) => {
                         fontWeight: 900,
                       }}
                     >
-                      {item.MaHD}
+                      #{item.MaHD}
                     </td>
-                    <td>{item.MaKH}</td>
+                    <td>{item.TenKH}</td>
+                    <td>{item.SDT}</td>
                     <td>{item.formattedDateTime}</td>
-                    <td>{item.KhuyenMai}</td>
                     <td>{item.TongTien}</td>
                     <td>{item.GhiChu}</td>
-                    <td className="check">
+                    <td>
                       <button
                         onClick={() => handleCheck(item.MaHD)}
-                        className="btn"
+                        className="btn btn-danger mr-2"
                       >
-                        Check <i class="fas fa-check"></i>
+                        Xác nhận <i class="fas fa-check"></i>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.MaHD)}
+                        className="btn btn-danger"
+                      >
+                        Huỷ
                       </button>
                     </td>
                   </>
