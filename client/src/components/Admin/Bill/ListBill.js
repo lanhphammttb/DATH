@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Bill.scss';
 import { useNavigate } from 'react-router-dom';
-const ListBill = (props) => {
+const ListBill = () => {
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
@@ -20,13 +20,14 @@ const ListBill = (props) => {
 
   const handleCheck = (id) => {
     axios.put(`/api/hoadon/${id}`);
-    axios.put(`/api/ship/${id}`);
+    axios.put(`/api/updatebill/${id}`);
+
     setData(data.filter((data) => data.MaHD !== id));
   };
   const handleDelete = (id) => {
     axios.put(`/api/delete/${id}`);
     setData(data.filter((data) => data.MaHD !== id));
-    axios.put(`/api/deletes/${id}`);
+
   };
 
   return (
@@ -37,6 +38,7 @@ const ListBill = (props) => {
                 </button>
             </div> */}
       <div id="list-bill" style={{ width: '100%' }}>
+        <p className='text-center text-danger'>Đơn hàng mới tạo</p>
         <table className="table table-striped">
           <thead>
             <tr className="text-center">
@@ -52,7 +54,7 @@ const ListBill = (props) => {
           <tbody>
             {data.map((item) => (
               <tr key={item.MaHD} className="text-center">
-                {item.TinhTrang == 'Chưa check' && (
+                {item.TinhTrang === 'Chưa check' && (
                   <>
                     <td
                       onClick={() => {
