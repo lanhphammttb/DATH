@@ -35,6 +35,9 @@ import Headers from './components/Purchase History/Header';
 import Canceled from './components/Purchase History/Canceled';
 import Deliveringg from './components/Purchase History/Deliveringg';
 import Done from './components/Purchase History/Done';
+import Delivering from './components/Admin/Bill/Delivering';
+import BillDone from './components/Admin/Bill/Done';
+import BillCanceled from './components/Admin/Bill/BillCanceled';
 function App() {
   // const u = JSON.parse(localStorage.getItem('user'));
 
@@ -82,6 +85,9 @@ function App() {
             <Route path="list-bill" element={<ListBill />} />
             <Route path="list-type-product" element={<ListTypeProduct />} />
             <Route path="list-bills" element={<ListBills />} />
+            <Route path="delivering" element={<Delivering />} />
+            <Route path="billdone" element={<BillDone />} />
+            <Route path="canceled" element={<BillCanceled />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -11,9 +11,17 @@ const currencyFormatter = require('currency-formatter');
 const vnpayRouter = require('./routes/vnpay');
 
 app.use(cors());
+const crypto = require('crypto');
+const algorithm = 'aes-256-ctr';
+const secretKey = 'yoursecretkey';
+
+// Example function to encrypt password
+
+
+// Example function to decrypt password
+
 
 const bodyParser = require('body-parser');
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -35,9 +43,9 @@ app.use('/api/vnpay', vnpayRouter);
 
 app.get('/api/users', (req, res) => {
   const userr = fs.readFileSync('data.txt', 'utf-8');
-  console.log(userr);
+  console.log(userr + "j");
   connection.query(
-    `SELECT MAKH FROM khachhang WHERE TAIKHOAN =? `,
+    `SELECT MAKH FROM khachhang WHERE TAIKHOAN = ? `,
     [userr],
     (err, results) => {
       if (err) {
@@ -50,7 +58,6 @@ app.get('/api/users', (req, res) => {
 });
 
 const jwt = require('jsonwebtoken');
-const secretKey = 'yoursecretkey';
 
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
@@ -143,10 +150,10 @@ app.get('/api/sanpham', (req, res) => {
     // Lọc danh sách sản phẩm dựa trên searchTerm
     const filteredProducts = searchTerm
       ? updatedResults.filter((product) =>
-          unidecode(product.TenSP.toLowerCase()).includes(
-            unidecode(searchTerm.toLowerCase())
-          )
+        unidecode(product.TenSP.toLowerCase()).includes(
+          unidecode(searchTerm.toLowerCase())
         )
+      )
       : updatedResults;
     // Trả về danh sách sản phẩm dưới dạng JSON
     res.json(filteredProducts);
@@ -379,7 +386,7 @@ app.post('/api/hoadon', (req, res) => {
 app.put('/api/hoadon/:id', (req, res, feilds) => {
   let MaHD = req.params.id;
   let sql = 'update hoadon set TinhTrang = ? where MaHD = ?';
-  let value = ['Đã check', MaHD];
+  let value = ['Đang vận chuyển', MaHD];
   connection.query(sql, value, (error, results, fields) => {
     if (error) throw error;
   });
@@ -398,28 +405,19 @@ app.put('/api/loaisanpham/:id', upload.none(), (req, res, feilds) => {
 app.put('/api/delete/:id', (req, res, feilds) => {
   let MaHD = req.params.id;
   let sql = 'update hoadon set TinhTrang = ? where MaHD = ?';
-  let value = ['Đã huỷ', MaHD];
-  connection.query(sql, value, (error, results, fields) => {
-    if (error) throw error;
-  });
-});
-app.put('/api/deletes/:id', (req, res, feilds) => {
-  let MaHD = req.params.id;
-  let sql = 'update chitiethoadon set TinhTrang = ? where MaHD = ?';
   let value = ['Huỷ', MaHD];
   connection.query(sql, value, (error, results, fields) => {
     if (error) throw error;
-    else {
-      res.json('Shop huỷ đơn');
-    }
   });
 });
+
 app.get('/api/chitiethoadon/:id', (req, res) => {
   const id = req.params.id;
-  const sql = `SELECT MaCTHD, chitiethoadon.MaSP as MaSP,chitiethoadon.SoLuong as SoLuong,TongTien,TinhTrang, sanpham.TenSP as TenSP,MaHD,sanpham.SoLuong as Kho
+  const sql = `SELECT MaCTHD, chitiethoadon.MaSP as MaSP,chitiethoadon.SoLuong as SoLuong,TongTien,TinhTrang, sanpham.TenSP as TenSP,MaHD,sanpham.SoLuong as Kho,sanpham.SoLuong-chitiethoadon.SoLuong as ConLai
   from chitiethoadon
   LEFT join sanpham on chitiethoadon.MaSP = sanpham.MaSP
-  WHERE MaHD = ${id}`;
+  WHERE MaHD = ${id}
+  `;
 
   connection.query(sql, (error, result, fields) => {
     if (error) {
@@ -464,32 +462,17 @@ app.post('/api/logout', (req, res) => {
 // });
 
 app.post('/api/history', (req, res) => {
-  const { MaKH } = req.body;
-  const sql = ` SELECT khachhang.MAKH, TENKH, hoadon.MaHD AS MaHD, MaCTHD, chitiethoadon.TongTien AS TONGTIENCTHD, chitiethoadon.SoLuong, TenSP,  Image,sanpham.GiaBan as Gia,hoadon.NgayLapHD as NgayLapHD,chitiethoadon.TinhTrang as TinhTrang
-  FROM khachhang
-  LEFT JOIN hoadon ON khachhang.MAKH = hoadon.MaKH
-  LEFT JOIN chitiethoadon ON chitiethoadon.MaHD = hoadon.MaHD
-  LEFT JOIN sanpham ON sanpham.MaSP = chitiethoadon.MaSP
-  WHERE khachhang.MAKH = ${MaKH}
-  order by NgayLapHD desc`;
-  connection.query(sql, (err, results, field) => {
+  const { MaHD } = req.body;
+  const sql = ` SELECT chitiethoadon.MaHD as MaHD, MaCTHD,chitiethoadon.MaSP,sanpham.TenSP,sanpham.Giaban as Gia,chitiethoadon.SoLuong,chitiethoadon.TongTien as TONGTIENCTHD,sanpham.Image  from chitiethoadon
+  left join sanpham on sanpham.MaSP = chitiethoadon.MaSP
+  left join hoadon on chitiethoadon.MaHD = hoadon.MaHD
+  where chitiethoadon.MaHD = ?
+  `;
+  connection.query(sql, MaHD, (err, results, fields) => {
     if (err) {
       console.error(err);
     } else {
-      const updatedResults = results.map((result) => {
-        // Chuyển đổi dữ liệu buffer thành URL hình ảnh
-        // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
-        imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
-        return { ...result, imageUrl };
-      });
-      const updatedResult = updatedResults.map((result) => {
-        const formattedDateTime = format(
-          new Date(result.NgayLapHD),
-          'dd/MM/yyyy HH:mm:ss'
-        );
-        return { ...result, formattedDateTime };
-      });
-      const money = updatedResult.map((result) => {
+      const money = results.map((result) => {
         const moneyy = currencyFormatter.format(result.Gia, {
           code: 'VND',
           precision: 0,
@@ -497,18 +480,65 @@ app.post('/api/history', (req, res) => {
         });
         return { ...result, moneyy };
       });
-      const money2 = money.map((result) => {
-        const moneyy2 = currencyFormatter.format(result.TONGTIENCTHD, {
+      const moneyy = money.map((result) => {
+        const moneyy1 = currencyFormatter.format(result.TONGTIENCTHD, {
           code: 'VND',
           precision: 0,
           symbol: '₫',
         });
-        return { ...result, moneyy2 };
+        return { ...result, moneyy1 };
       });
-      res.json(money2);
+      const updatedResults = moneyy.map((result) => {
+        // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+        // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+        imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+        return { ...result, imageUrl };
+      });
+      res.json(updatedResults);
     }
   });
 });
+
+app.put('/api/updatebill/:id', (req, res) => {
+  const MaHD = req.params.id;
+  const sql = `update sanpham 
+  join chitiethoadon on sanpham.MaSP = chitiethoadon.MaSP
+  set sanpham.SoLuong = sanpham.SoLuong - chitiethoadon.SoLuong
+  WHERE chitiethoadon.MaHD = ?`;
+  connection.query(sql, MaHD, (err, results) => {
+    if (err) console.error(err);
+  })
+})
+
+app.post('/api/historybill', (req, res) => {
+  const MaKH = req.body;
+  const sql = `select * from hoadon where MaKH = ?
+  order by NgayLapHD desc`;
+  connection.query(sql, [MaKH], (err, results) => {
+    if (err) {
+      console.error(err);
+    }
+    else {
+      const updatedResult = results.map((result) => {
+        const formattedDateTime = format(
+          new Date(result.NgayLapHD),
+          'dd/MM/yyyy HH:mm:ss'
+        );
+        return { ...result, formattedDateTime };
+      });
+      const moneyy = updatedResult.map((result) => {
+        const moneyy1 = currencyFormatter.format(result.TongTien, {
+          code: 'VND',
+          precision: 0,
+          symbol: '₫',
+        });
+        return { ...result, moneyy1 };
+      });
+      res.json(moneyy);
+    }
+  })
+})
+
 
 app.post('/api/signup', (req, res) => {
   const { user, phone, address, name } = req.body;
@@ -564,9 +594,22 @@ app.post('/api/chitiethoadon', (req, res) => {
   );
 });
 app.put('/api/cancel/:id', (req, res) => {
-  let MaCTHD = req.params.id;
-  let sql = `update chitiethoadon set TinhTrang = ? where MaCTHD = ? `;
-  let value = ['Huỷ', MaCTHD];
+  let MaHD = req.params.id;
+  let sql = `update hoadon set TinhTrang = ? where MaHD = ? `;
+  let value = ['Huỷ', MaHD];
+
+  connection.query(sql, value, (err, results) => {
+    if (err) {
+      res.sendStatus(500);
+    } else {
+      res.json('Đã huỷ');
+    }
+  });
+});
+app.put('/api/re-bill/:id', (req, res) => {
+  let MaHD = req.params.id;
+  let sql = `update hoadon set TinhTrang = ? where MaHD = ? `;
+  let value = ['Chưa check', MaHD];
 
   connection.query(sql, value, (err, results) => {
     if (err) {
@@ -577,22 +620,9 @@ app.put('/api/cancel/:id', (req, res) => {
   });
 });
 app.put('/api/done/:id', (req, res) => {
-  let MaCTHD = req.params.id;
-  let sql = `update chitiethoadon set TinhTrang = ? where MaCTHD = ? `;
-  let value = ['Đã giao hàng', MaCTHD];
-
-  connection.query(sql, value, (err, results) => {
-    if (err) {
-      res.sendStatus(500);
-    } else {
-      res.json('Huỷ đơn thành công');
-    }
-  });
-});
-app.put('/api/ship/:id', (req, res) => {
   let MaHD = req.params.id;
-  let sql = `update chitiethoadon set TinhTrang = ? where MaHD = ? `;
-  let value = ['Đang giao hàng', MaHD];
+  let sql = `update hoadon set TinhTrang = ? where MaHD = ? `;
+  let value = ['Đã giao hàng', MaHD];
 
   connection.query(sql, value, (err, results) => {
     if (err) {
@@ -602,44 +632,48 @@ app.put('/api/ship/:id', (req, res) => {
     }
   });
 });
-app.get('/api/history', (req, res) => {
-  const { MaKH } = req.body;
-  const sql = ` SELECT khachhang.MAKH, TENKH, hoadon.MaHD AS MaHD, MaCTHD, chitiethoadon.TongTien AS TONGTIENCTHD, chitiethoadon.SoLuong, TenSP
-  FROM khachhang
-  LEFT JOIN hoadon ON khachhang.MAKH = hoadon.MaKH
-  LEFT JOIN chitiethoadon ON chitiethoadon.MaHD = hoadon.MaHD
-  LEFT JOIN sanpham ON sanpham.MaSP = chitiethoadon.MaSP
-  WHERE khachhang.MAKH  = ${MaKH}
-  order by NgayLapHD desc`;
-  connection.query(sql, (err, results, field) => {
-    if (err) {
-      console.error(err);
-    } else {
-      const updatedResults = results.map((result) => {
-        // Chuyển đổi dữ liệu buffer thành URL hình ảnh
-        // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
-        imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
-        return { ...result, imageUrl };
-      });
-      const updatedResult = updatedResults.map((result) => {
-        const formattedDateTime = format(
-          new Date(result.NgayLapHD),
-          'dd/MM/yyyy HH:mm:ss'
-        );
-        return { ...result, formattedDateTime };
-      });
-      const money = updatedResult.map((result) => {
-        const moneyy = currencyFormatter.format(result.Gia, {
-          code: 'VND',
-          precision: 0,
-          symbol: '₫',
-        });
-        return { ...result, moneyy };
-      });
-      res.json(money);
-    }
-  });
-});
+
+
+
+
+// app.get('/api/history', (req, res) => {
+//   const { MaKH } = req.body;
+//   const sql = ` SELECT khachhang.MAKH, TENKH, hoadon.MaHD AS MaHD, MaCTHD, chitiethoadon.TongTien AS TONGTIENCTHD, chitiethoadon.SoLuong, TenSP
+//   FROM khachhang
+//   LEFT JOIN hoadon ON khachhang.MAKH = hoadon.MaKH
+//   LEFT JOIN chitiethoadon ON chitiethoadon.MaHD = hoadon.MaHD
+//   LEFT JOIN sanpham ON sanpham.MaSP = chitiethoadon.MaSP
+//   WHERE khachhang.MAKH  = ${MaKH}
+//   order by NgayLapHD desc`;
+//   connection.query(sql, (err, results, field) => {
+//     if (err) {
+//       console.error(err);
+//     } else {
+//       const updatedResults = results.map((result) => {
+//         // Chuyển đổi dữ liệu buffer thành URL hình ảnh
+//         // const imageUrl = `data:image/jpeg;base64,${result.Image.toString('base64')}`;
+//         imageUrl = Buffer.from(result.Image, 'base64').toString('binary');
+//         return { ...result, imageUrl };
+//       });
+//       const updatedResult = updatedResults.map((result) => {
+//         const formattedDateTime = format(
+//           new Date(result.NgayLapHD),
+//           'dd/MM/yyyy HH:mm:ss'
+//         );
+//         return { ...result, formattedDateTime };
+//       });
+//       const money = updatedResult.map((result) => {
+//         const moneyy = currencyFormatter.format(result.Gia, {
+//           code: 'VND',
+//           precision: 0,
+//           symbol: '₫',
+//         });
+//         return { ...result, moneyy };
+//       });
+//       res.json(money);
+//     }
+//   });
+// });
 
 app.post('/api/signup', (req, res) => {
   const { user, phone, address, name } = req.body;

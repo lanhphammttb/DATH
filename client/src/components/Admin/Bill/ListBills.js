@@ -11,6 +11,7 @@ const ListBills = () => {
       .get(`/api/chitiethoadon/${MaHD}`)
       .then((response) => {
         setData(response.data);
+
       })
       .catch((error) => {
         console.error(error);

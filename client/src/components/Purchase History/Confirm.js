@@ -4,11 +4,15 @@ import axios from 'axios';
 const Confirm = () => {
   const MaKH = localStorage.getItem('makh');
   const [data, setData] = useState([]);
+  const [show, setShow] = useState(false);
+  const [cthd, setCthd] = useState([]);
   useEffect(() => {
     axios
-      .post('/api/history', { MaKH })
+      .post('/api/historybill', { MaKH })
       .then((response) => {
         setData(response.data);
+        console.log(response.data);
+
       })
       .catch((err) => {
         console.error(err);
@@ -21,7 +25,7 @@ const Confirm = () => {
       .then(() => {
         setData(
           data.filter((dt) => {
-            return dt.MaCTHD !== id;
+            return dt.MaHD !== id;
           })
         );
       })
@@ -31,49 +35,57 @@ const Confirm = () => {
   };
   return (
     <>
-      <div className="container-fuild">
+      <div className="container-fluid">
         <ul style={{ padding: '0px', minHeight: 350 }}>
           {data.map((item) => (
-            <div key={item.MaCTHD}>
-              {item.TinhTrang !== 'Chưa check' && (
+            <div key={item.MaHD}>
+              {item.TinhTrang === 'Chưa check' && (
                 <li className="row d-flex align-items-center mt-2 border ">
-                  <div className="col-1 d-flex justify-content-center ">
-                    #{item.MaCTHD}
+                  <div className="col-1 d-flex justify-content-center text-danger font-weight-bold " onClick={(e) => {
+                    e.preventDefault();
+                    setShow(show ? false : true);
+                    const MaHD = item.MaHD;
+                    localStorage.setItem("mahdd", MaHD);
+                    console.log(MaHD);
+                    axios.post('/api/history', { MaHD })
+                      .then((res) => {
+                        setCthd(res.data);
+                        console.log(res.data);
+                      })
+                  }}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    #{item.MaHD}
                   </div>
-                  <div className="col-1">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.TenSP}
-                      className="w-100"
-                    />
+                  <div className="col-2">Tên người nhận : <br />
+                    {item.TenNguoiNhan}
                   </div>
-                  <div className="col-2 font-weight-bold  d-flex justify-content-center ">
-                    {item.TenSP}
-                  </div>
-                  <div className="col-1" style={{ color: '#ee4d2d' }}>
-                    {item.moneyy}
-                  </div>
-                  <div className="col-1" style={{ color: 'rgba(0,0,0,.87)' }}>
-                    x{item.SoLuong}
+                  <div className="col-1" style={{ color: 'rgba(0,0,0,.87)' }}>SĐT : <br />
+                    {item.SDTNguoiNhan}
                   </div>
                   <div className="col-2">
-                    Ngày đặt hàng <br />
+                    Ngày đặt hàng :<br />
                     {item.formattedDateTime}
                   </div>
+                  <div className="col-3">
+                    Địa chỉ :<br />
+                    {item.DiaChiNhanHang}
+                  </div>
                   <div className="col-2 d-flex justify-content-center">
-                    <p>Tổng tiền :</p>
+                    Tổng tiền :
+                    <br />
                     <p
                       className="font-weight-bold"
                       style={{ color: '#ee4d2d' }}
                     >
-                      {item.TONGTIENCTHD}
+                      {item.moneyy1}
                     </p>
                   </div>
-                  <div className="col-2 d-flex justify-content-center">
+                  <div className="col-1 d-flex justify-content-center">
                     <button
                       type="button"
                       className="btn btn-danger"
-                      onClick={() => handleCancel(item.MaCTHD)}
+                      onClick={() => handleCancel(item.MaHD)}
                     >
                       Huỷ
                     </button>
@@ -83,6 +95,40 @@ const Confirm = () => {
             </div>
           ))}
         </ul>
+        {show &&
+          <div>
+            <p>Chi tiết hoá đơn #{localStorage.getItem("mahdd")}</p>
+            <ul>
+              {
+                cthd.map((item) => (
+                  <li key={item.MaCTHD} className="row d-flex align-items-center mt-2 border ">
+                    <div className='col-1'>#{item.MaCTHD}</div>
+                    <div className='col-1'>
+                      <img
+                        src={item.imageUrl}
+                        alt="sản phẩm"
+                        className='w-50'
+                      />
+                    </div>
+                    <div className='col-2'>
+                      {item.TenSP}
+                    </div>
+                    <div className='col-2'>
+                      {item.moneyy}
+                    </div>
+                    <div className='col-2 d-flex align-items-center'>
+                      x{item.SoLuong}
+                    </div>
+                    <div className='col-2'>
+                      Tổng tiền : <br />
+                      {item.moneyy1}
+                    </div>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        }
       </div>
     </>
   );

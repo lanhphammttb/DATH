@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Delivering = () => {
+const BillDone = () => {
     const [data, setData] = useState([]);
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Delivering = () => {
                       </button>
                   </div> */}
             <div id="list-bill" style={{ width: '100%' }}>
-                <p className='text-center text-danger'>Đang vận chuyển</p>
+                <p className='text-center text-danger'>Đơn hàng đã hoàn thành</p>
                 <table className="table table-striped">
                     <thead>
                         <tr className="text-center">
@@ -43,7 +43,7 @@ const Delivering = () => {
                     <tbody>
                         {data.map((item) => (
                             <tr key={item.MaHD} className="text-center">
-                                {item.TinhTrang === 'Đang vận chuyển' && (
+                                {item.TinhTrang === 'Đã giao hàng' && (
                                     <>
                                         <td
                                             onClick={() => {
@@ -76,4 +76,4 @@ const Delivering = () => {
     );
 }
 
-export default Delivering;
+export default BillDone;
