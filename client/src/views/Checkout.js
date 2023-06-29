@@ -7,7 +7,7 @@ import AddressForm from '../components/AddressForm';
 import axios from 'axios';
 // import { add } from 'date-fns';
 const Checkout = () => {
-  const { cartItems, totalPrice } = useContext(CartContext);
+  const { cartItems, totalPrice, removeAllFromCart } = useContext(CartContext);
   const [address, setAddress] = useState({});
   const [customer, setCustomer] = useState({});
   const [invoice, setInvoice] = useState({});
@@ -100,6 +100,8 @@ const Checkout = () => {
         'Tạo mới Chi tiết hóa đơn thành công:',
         invoiceDetailResponses.map((response) => response.data)
       );
+      removeAllFromCart();
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
     } catch (error) {
       console.error('Lỗi khi tạo mới Hóa đơn và Chi tiết hóa đơn:', error);
     }

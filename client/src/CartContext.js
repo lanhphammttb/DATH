@@ -35,6 +35,10 @@ export const CartProvider = ({ children }) => {
     setCartItems(newCartItems);
   };
 
+  const removeAllFromCart = () => {
+    setCartItems([]);
+  };
+
   const updateCart = (item, updatedQuantity) => {
     const updatedCartItems = cartItems.map((x) =>
       x.MaSP === item.MaSP
@@ -75,6 +79,7 @@ export const CartProvider = ({ children }) => {
         cartItems,
         addToCart,
         removeFromCart,
+        removeAllFromCart,
         updateCart,
         cartCount,
         totalPrice,

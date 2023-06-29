@@ -14,8 +14,8 @@ import { CartContext } from '../CartContext';
 import _ from 'lodash';
 import LoadingBox from './LoadingBox';
 const ProductCard = (props) => {
-  const { grid } = props;
-  const { condition } = props;
+  const { grid, condition, isInStock, isOutOfStock, fromValue, toValue } =
+    props;
   let location = useLocation();
   const [products, setProducts] = useState([]);
   const { searchTerm } = useContext(CartContext);
@@ -38,8 +38,6 @@ const ProductCard = (props) => {
     const response = await axios.get(url, config);
     setIsLoading(false);
     let data = response.data;
-
-    setIsLoading(false);
     switch (condition) {
       case 'Bán Chạy':
         data = topSeller;
@@ -61,17 +59,38 @@ const ProductCard = (props) => {
         // Xử lý cho trường hợp mặc định nếu không có case nào khớp với giá trị của biến condition
         break;
     }
-    setProducts(data);
+    const filteredData = data.filter((item) => {
+      if (fromValue && toValue !== null) {
+        if (item.GiaBan < fromValue || item.GiaBan > toValue) {
+          return false;
+        }
+      }
+
+      // Lọc dữ liệu theo trạng thái hàng tồn kho
+      if (isInStock && item.SoLuong === 0) {
+        return false;
+      }
+      if (isOutOfStock && item.SoLuong !== 0) {
+        return false;
+      }
+
+      return true;
+    });
+
+    setProducts(filteredData);
   };
 
   useEffect(() => {
     if (condition === 'Liên Quan') {
       setIsLoading(true);
     }
+    if (isInStock || isOutOfStock || (fromValue && toValue !== null)) {
+      setIsLoading(false);
+    }
     fetchProducts();
     fetchTopSeller();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, condition]);
+  }, [searchTerm, condition, isInStock, isOutOfStock, fromValue, toValue]);
 
   if (isLoading) {
     return <LoadingBox />;

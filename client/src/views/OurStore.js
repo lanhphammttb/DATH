@@ -8,8 +8,28 @@ import Container from '../components/Container';
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
   const [condition, setCondition] = useState('Liên Quan');
+  const [isInStock, setIsInStock] = useState(false);
+  const [isOutOfStock, setIsOutOfStock] = useState(false);
+  const [fromValue, setFromValue] = useState('');
+  const [toValue, setToValue] = useState('');
+
+  const handleFromChange = (value) => {
+    setFromValue(value);
+  };
+
+  const handleToChange = (value) => {
+    setToValue(value);
+  };
+
   const handleConditionChange = (event) => {
     setCondition(event.target.value);
+  };
+
+  const handleCheckboxChange1 = (event) => {
+    setIsInStock(event.target.checked);
+  };
+  const handleCheckboxChange2 = (event) => {
+    setIsOutOfStock(event.target.checked);
   };
   return (
     <>
@@ -18,7 +38,7 @@ const OurStore = () => {
       <Container class1="store-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-3">
-            <div className="filter-card mb-3">
+            {/* <div className="filter-card mb-3">
               <h3 className="filter-title">Danh mục sản phẩm</h3>
               <div>
                 <ul className="list-unstyled ps-0">
@@ -168,11 +188,11 @@ const OurStore = () => {
                   </li>
                 </ul>
               </div>
-            </div>
+            </div> */}
             <div className="filter-card mb-3">
-              <h3 className="filter-title">Filter By</h3>
+              <h3 className="filter-title">Lọc theo</h3>
               <div>
-                <h5 className="sub-title">Availablity</h5>
+                <h5 className="sub-title">Sẵn có</h5>
                 <div>
                   <div className="form-check">
                     <input
@@ -180,9 +200,10 @@ const OurStore = () => {
                       type="checkbox"
                       value=""
                       id=""
+                      onChange={handleCheckboxChange1}
                     />
                     <label className="form-check-label" htmlFor="">
-                      In Stock (1)
+                      Còn hàng
                     </label>
                   </div>
                   <div className="form-check">
@@ -191,13 +212,14 @@ const OurStore = () => {
                       type="checkbox"
                       value=""
                       id=""
+                      onChange={handleCheckboxChange2}
                     />
                     <label className="form-check-label" htmlFor="">
-                      Out of Stock(0)
+                      Hết hàng
                     </label>
                   </div>
                 </div>
-                <h5 className="sub-title">Price</h5>
+                <h5 className="sub-title">Giá</h5>
                 <div className="d-flex align-items-center gap-10">
                   <div className="form-floating">
                     <input
@@ -205,8 +227,9 @@ const OurStore = () => {
                       className="form-control"
                       id="floatingInput"
                       placeholder="From"
+                      onChange={(e) => handleFromChange(e.target.value)}
                     />
-                    <label htmlFor="floatingInput">From</label>
+                    <label htmlFor="floatingInput">Từ</label>
                   </div>
                   <div className="form-floating">
                     <input
@@ -214,11 +237,12 @@ const OurStore = () => {
                       className="form-control"
                       id="floatingInput1"
                       placeholder="To"
+                      onChange={(e) => handleToChange(e.target.value)}
                     />
-                    <label htmlFor="floatingInput1">To</label>
+                    <label htmlFor="floatingInput1">Đến</label>
                   </div>
                 </div>
-                <h5 className="sub-title">Colors</h5>
+                <h5 className="sub-title">Màu</h5>
                 <div>
                   <Color />
                 </div>
@@ -268,7 +292,7 @@ const OurStore = () => {
                 </div>
               </div>
             </div>
-            <div className="filter-card mb-3">
+            {/* <div className="filter-card mb-3">
               <h3 className="filter-title">Random Product</h3>
               <div>
                 <div className="random-products mb-3 d-flex">
@@ -316,7 +340,7 @@ const OurStore = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="col-9">
             <div className="filter-sort-grid mb-4">
@@ -385,7 +409,14 @@ const OurStore = () => {
             </div>
             <div className="products-list pb-5">
               <div className="d-flex gap-10 flex-wrap">
-                <ProductCard grid={grid} condition={condition} />
+                <ProductCard
+                  grid={grid}
+                  condition={condition}
+                  isInStock={isInStock}
+                  isOutOfStock={isOutOfStock}
+                  fromValue={fromValue}
+                  toValue={toValue}
+                />
               </div>
             </div>
           </div>

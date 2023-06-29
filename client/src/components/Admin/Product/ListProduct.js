@@ -24,7 +24,6 @@ const ListProduct = (props) => {
   }, []);
 
   const handleSelectProduct = (product) => {
-    // console.log(product)
     setSelectedProduct(product);
   };
 
@@ -116,7 +115,7 @@ const ListProduct = (props) => {
             <CreateProduct product={selectedProduct} isEditing={isEditing} />
           ) : (
             <CreateProduct />
-          )}{' '}
+          )}
         </div>
       </div>
     </div>

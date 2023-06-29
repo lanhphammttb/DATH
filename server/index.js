@@ -8,13 +8,15 @@ const unidecode = require('unidecode');
 const fs = require('fs');
 const app = express();
 const currencyFormatter = require('currency-formatter');
+const vnpayRouter = require('./routes/vnpay');
 
 app.use(cors());
 
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -28,6 +30,8 @@ connection.connect((err) => {
   if (err) throw err;
   console.log('Connected to MySQL database!');
 });
+
+app.use('/api/vnpay', vnpayRouter);
 
 app.get('/api/users', (req, res) => {
   const userr = fs.readFileSync('data.txt', 'utf-8');
@@ -95,6 +99,9 @@ const isImage = (req, file, callback) => {
 const upload = multer({
   storage: storage,
   fileFilter: isImage,
+  limits: {
+    fieldSize: 1024 * 1024 * 10, // 10 MB (in bytes)
+  },
 });
 // app.get('/api/sanpham', (req, res) => {
 //   const sql = 'SELECT * FROM sanpham';
@@ -221,17 +228,13 @@ app.post('/api/loaisanpham', upload.none(), (req, res) => {
   );
 });
 
-app.put('/api/sanpham/:id', async (req, res) => {
+app.put('/api/sanpham/:id', upload.single('file'), async (req, res) => {
   const productId = req.params.id;
   const { tensp, soluong, gianhap, giaban, maloaisp, nsx, mota } = req.body;
   const finalImg = req.body.file;
-  // Kiểm tra tính hợp lệ của dữ liệu sản phẩm
-  // ...
-
   try {
-    // Cập nhật thông tin sản phẩm trong CSDL
-    const [rows] = await connection.execute(
-      'UPDATE sanpham SET TenSP=? SoLuong=? GiaNhap=? GiaBan=? MaLoaiSP=? NSX=? MoTa=? Image=?,  WHERE MaSP=?',
+    await connection.execute(
+      'UPDATE sanpham SET TenSP=?, SoLuong=?, GiaNhap=?, GiaBan=?, MaLoaiSP=?, NSX=?, MoTa=?, Image=? WHERE MaSP=?',
       [
         tensp,
         soluong,
@@ -244,9 +247,7 @@ app.put('/api/sanpham/:id', async (req, res) => {
         productId,
       ]
     );
-
-    console.log('up');
-    res.json(updatedProduct[0]);
+    res.json({ message: 'Sửa sản phẩm thành công' });
   } catch (error) {
     console.error(error);
     res.status(500).send(`Error updating product: ${error.message}`);
@@ -384,6 +385,16 @@ app.put('/api/hoadon/:id', (req, res, feilds) => {
   });
 });
 
+app.put('/api/loaisanpham/:id', upload.none(), (req, res, feilds) => {
+  let MaLoaiSP = req.params.id;
+  let { tenloaisp } = req.body;
+  let sql = 'update loaisanpham set TenLoaiSP = ? where MaLoaiSP= ?';
+  let value = [tenloaisp, MaLoaiSP];
+  connection.query(sql, value, (error, results, fields) => {
+    if (error) throw error;
+  });
+});
+
 app.put('/api/delete/:id', (req, res, feilds) => {
   let MaHD = req.params.id;
   let sql = 'update hoadon set TinhTrang = ? where MaHD = ?';
@@ -418,6 +429,20 @@ app.get('/api/chitiethoadon/:id', (req, res) => {
     }
   });
 });
+
+app.get('/api/loaisanpham/:id', (req, res) => {
+  const id = req.params.id;
+  const sql = `SELECT TenLoaiSP from loaisanpham WHERE MaLoaiSP = ${id}`;
+
+  connection.query(sql, (error, result, fields) => {
+    if (error) {
+      res.status(500).json({ error: error });
+    } else {
+      res.status(200).json(result[0]);
+    }
+  });
+});
+
 let isLogin = false;
 
 app.post('/api/logout', (req, res) => {
@@ -646,6 +671,14 @@ app.post('/api/signupp', (req, res) => {
       }
     }
   );
+});
+
+app.post('/return', (req, res) => {
+  const vnp_Params = req.body;
+  // Xử lý dữ liệu kết quả thanh toán tại đây
+  // ...
+  // Trả về kết quả cho frontend
+  res.status(200).json({ message: 'Thanh toán thành công' });
 });
 
 const port = process.env.PORT || 5000;

@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import './TypeProduct.scss';
-import CommonUtils from '../../../ultils/CommonUtils';
+// import CommonUtils from '../../../ultils/CommonUtils';
 const CreatTypeProduct = (props) => {
   const [maloaisp, setMaLoaiSP] = useState('');
   const [tenloaisp, setTenLoaiSP] = useState('');
@@ -35,10 +35,18 @@ const CreatTypeProduct = (props) => {
     };
 
     const res = null;
-    if (props.isEditing === true) {
-      res = await axios.post(`/api/loaisanpham/${maloaisp}`, formData, config);
+    if (props.isEditing) {
+      res = await axios.put(
+        `http://localhost:5000/api/loaisanpham/${maloaisp}`,
+        formData,
+        config
+      );
     } else {
-      res = await axios.post('/api/loaisanpham', formData, config);
+      res = await axios.post(
+        'http://localhost:5000/api/loaisanpham',
+        formData,
+        config
+      );
     }
 
     if (res.data.status == 201) {
@@ -74,15 +82,15 @@ const CreatTypeProduct = (props) => {
               />
             </Form.Group>
           </Form.Group>
+          <button
+            className="btn btn-primary save-type"
+            variant="primary"
+            type="submit"
+            onClick={addData}
+          >
+            <i class="fas fa-plus mr-2"></i>Lưu loại sản phẩm
+          </button>
         </Form>
-        <button
-          className="btn btn-primary save-type"
-          variant="primary"
-          type="submit"
-          onClick={addData}
-        >
-          <i class="fas fa-plus mr-2"></i>Lưu loại sản phẩm
-        </button>
       </div>
     </>
   );

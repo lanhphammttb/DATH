@@ -16,8 +16,15 @@ const CreatProduct = (props) => {
   const [mota, setMoTa] = useState('');
   const [file, setFile] = useState('');
   const [imageURL, setImageURL] = useState('');
-  // const imageRef = useRef(null);
+  const [options, setOptions] = useState([]);
+  // const imageRef = useRef(null)
+  const fetchData = async () => {
+    const response = await axios.get('/api/loaisanpham');
+    setOptions(response.data);
+  };
+
   useEffect(() => {
+    console.log(props.isEditing);
     if (props.product) {
       setMaSP(props.product.MaSP);
       setTenSP(props.product.TenSP);
@@ -30,6 +37,7 @@ const CreatProduct = (props) => {
       setFile(props.product.imageUrl);
       setImageURL(props.product.imageUrl);
     }
+    fetchData();
   }, [props.product]);
 
   const setmasp = (e) => {
@@ -53,7 +61,10 @@ const CreatProduct = (props) => {
   };
 
   const setmaloaisp = (e) => {
-    setMaLoaiSP(e.target.value);
+    const selectedOption = e.target.options[e.target.selectedIndex];
+    const selectedMaLoaiSP = selectedOption.getAttribute('data-maloaisp');
+    setMaLoaiSP(selectedMaLoaiSP);
+    console.log(selectedMaLoaiSP);
   };
 
   const setnsx = (e) => {
@@ -83,6 +94,11 @@ const CreatProduct = (props) => {
       return;
     }
 
+    if (fileImage && fileImage.size < 30 * 1024) {
+      toast.error('Kích thước ảnh phải lớn hơn 30KB.');
+      return;
+    }
+
     const objectUrl = URL.createObjectURL(fileImage);
     setImageURL(objectUrl);
     setFile(base64);
@@ -109,8 +125,8 @@ const CreatProduct = (props) => {
     };
 
     const res = null;
-    if (props.isEditing === true) {
-      res = await axios.post(`/api/sanpham/${masp}`, formData, config);
+    if (props.isEditing) {
+      res = await axios.put(`/api/sanpham/${masp}`, formData, config);
     } else {
       res = await axios.post('/api/sanpham', formData, config);
     }
@@ -181,12 +197,29 @@ const CreatProduct = (props) => {
 
               <Form.Group className="mb-1">
                 <Form.Label>Mã loại sản phẩm</Form.Label>
-                <Form.Control
+                {/* <Form.Control
                   type="text"
                   name="maloaisp"
                   onChange={setmaloaisp}
                   defaultValue={maloaisp}
-                />
+                /> */}
+                <Form.Select
+                  name="maloaisp"
+                  value={maloaisp ? maloaisp : null}
+                  onChange={(e) => setmaloaisp(e)}
+                >
+                  {options.map((option) => (
+                    <option
+                      key={option.MaLoaiSP}
+                      value={
+                        maloaisp === option.MaLoaiSP ? option.MaLoaiSP : null
+                      }
+                      data-maloaisp={option.MaLoaiSP}
+                    >
+                      {option.TenLoaiSP}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
 
               <Form.Group className="mb-1">
