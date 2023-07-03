@@ -11,13 +11,17 @@ const Delivering = () => {
             .get('/api/hoadon')
             .then((response) => {
                 setData(response.data);
-                console.log(response.data);
+                // console.log(response.data);
             })
             .catch((error) => {
                 console.error(error);
             });
     }, []);
+    const handleCheck = (id) => {
+        axios.put(`/api/done/${id}`);
 
+        setData(data.filter((data) => data.MaHD !== id));
+    };
 
     return (
         <div className="container">
@@ -37,7 +41,7 @@ const Delivering = () => {
                             <th>Ngày lập hoá đơn</th>
                             <th>Tổng tiền</th>
                             <th>Ghi chú</th>
-
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,6 +69,14 @@ const Delivering = () => {
                                         <td>{item.formattedDateTime}</td>
                                         <td>{item.TongTien}</td>
                                         <td>{item.GhiChu}</td>
+                                        <td className=' align-items-center'>
+                                            <button
+                                                onClick={() => handleCheck(item.MaHD)}
+                                                className="btn btn-success w-100 mr-2 mb-2  "
+                                            >
+                                                Đã giao hàng <i class="fas fa-check"></i>
+                                            </button>
+                                        </td>
                                     </>
                                 )}
                             </tr>

@@ -21,6 +21,8 @@ const CreatProduct = (props) => {
   const fetchData = async () => {
     const response = await axios.get('/api/loaisanpham');
     setOptions(response.data);
+
+    setMaLoaiSP(response.data[0].MaLoaiSP);
   };
 
   useEffect(() => {
@@ -141,140 +143,137 @@ const CreatProduct = (props) => {
 
   return (
     <>
-      {localStorage.getItem('chucvu') === 'Admin' ? (
-        <div className="container">
-          <Form className="row">
-            <Form.Group className="col-md-6">
-              <Form.Group className="mb-1">
-                <Form.Label>Mã sản phẩm</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="masp"
-                  onChange={setmasp}
-                  defaultValue={masp}
-                />
-              </Form.Group>
+      <div className="container">
+        <Form className="row">
+          <Form.Group className="col-md-6">
+            <Form.Group className="mb-1">
+              <Form.Label>Mã sản phẩm</Form.Label>
+              <Form.Control
+                type="text"
+                name="masp"
+                onChange={setmasp}
+                defaultValue={masp}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-1">
-                <Form.Label>Tên sản phẩm</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="tensp"
-                  onChange={settensp}
-                  defaultValue={tensp}
-                />
-              </Form.Group>
+            <Form.Group className="mb-1">
+              <Form.Label>Tên sản phẩm</Form.Label>
+              <Form.Control
+                type="text"
+                name="tensp"
+                onChange={settensp}
+                defaultValue={tensp}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-1">
-                <Form.Label>Số lượng</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="soluong"
-                  onChange={setsoluong}
-                  defaultValue={soluong}
-                />
-              </Form.Group>
+            <Form.Group className="mb-1">
+              <Form.Label>Số lượng</Form.Label>
+              <Form.Control
+                type="text"
+                name="soluong"
+                onChange={setsoluong}
+                defaultValue={soluong}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-1">
-                <Form.Label>Giá nhập</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="gianhap"
-                  onChange={setgianhap}
-                  defaultValue={gianhap}
-                />
-              </Form.Group>
+            <Form.Group className="mb-1">
+              <Form.Label>Giá nhập</Form.Label>
+              <Form.Control
+                type="text"
+                name="gianhap"
+                onChange={setgianhap}
+                defaultValue={gianhap}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-1">
-                <Form.Label>Giá bán</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="giaban"
-                  onChange={setgiaban}
-                  defaultValue={giaban}
-                />
-              </Form.Group>
+            <Form.Group className="mb-1">
+              <Form.Label>Giá bán</Form.Label>
+              <Form.Control
+                type="text"
+                name="giaban"
+                onChange={setgiaban}
+                defaultValue={giaban}
+              />
+            </Form.Group>
 
-              <Form.Group className="mb-1">
-                <Form.Label>Mã loại sản phẩm</Form.Label>
-                {/* <Form.Control
+            <Form.Group className="mb-1">
+              <Form.Label>Mã loại sản phẩm</Form.Label>
+              {/* <Form.Control
                   type="text"
                   name="maloaisp"
                   onChange={setmaloaisp}
                   defaultValue={maloaisp}
                 /> */}
-                <Form.Select
-                  name="maloaisp"
-                  value={maloaisp ? maloaisp : null}
-                  onChange={(e) => setmaloaisp(e)}
-                >
-                  {options.map((option) => (
-                    <option
-                      key={option.MaLoaiSP}
-                      value={
-                        maloaisp === option.MaLoaiSP ? option.MaLoaiSP : null
-                      }
-                      data-maloaisp={option.MaLoaiSP}
-                    >
-                      {option.TenLoaiSP}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-1">
-                <Form.Label>NSX</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="nsx"
-                  onChange={setnsx}
-                  defaultValue={nsx}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-1">
-                <Form.Label>Mô tả</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="mota"
-                  onChange={setmota}
-                  defaultValue={mota}
-                />
-              </Form.Group>
-            </Form.Group>
-
-            <Form.Group className="col-md-6">
-              <Form.Group className="mb-1">
-                <Form.Label htmlFor="mypicture" className="preview">
-                  <i className="fas fa-cloud-upload"></i>
-                  <span>Select Your Image</span>
-                  <div
-                    className="preview-image"
-                    style={{ backgroundImage: `url(${imageURL})` }}
-                  ></div>
-                </Form.Label>
-                <Form.Control
-                  type="file"
-                  name="file"
-                  onChange={(e) => setimgfile(e)}
-                  hidden
-                  id="mypicture"
-                />
-              </Form.Group>
-              <button
-                className="btn btn-primary"
-                variant="primary"
-                type="submit"
-                onClick={addData}
+              <Form.Select
+                name="maloaisp"
+                value={maloaisp ? maloaisp : null}
+                onChange={(e) => setmaloaisp(e)}
               >
-                <i class="fas fa-plus mr-2"></i>Lưu sản phẩm
-              </button>
+                {options.map((option) => (
+                  <option
+                    key={option.MaLoaiSP}
+                    value={
+                      maloaisp === option.MaLoaiSP ? option.MaLoaiSP : null
+                    }
+                    data-maloaisp={option.MaLoaiSP}
+                  >
+                    {option.TenLoaiSP}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
-          </Form>
-        </div>
-      ) : (
-        <h1>Không có quyền truy cập sửa sản phẩm</h1>
-      )}
+
+            <Form.Group className="mb-1">
+              <Form.Label>NSX</Form.Label>
+              <Form.Control
+                type="text"
+                name="nsx"
+                onChange={setnsx}
+                defaultValue={nsx}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-1">
+              <Form.Label>Mô tả</Form.Label>
+              <Form.Control
+                type="text"
+                name="mota"
+                onChange={setmota}
+                defaultValue={mota}
+              />
+            </Form.Group>
+          </Form.Group>
+
+          <Form.Group className="col-md-6">
+            <Form.Group className="mb-1">
+              <Form.Label htmlFor="mypicture" className="preview">
+                <i className="fas fa-cloud-upload"></i>
+                <span>Select Your Image</span>
+                <div
+                  className="preview-image"
+                  style={{ backgroundImage: `url(${imageURL})` }}
+                ></div>
+              </Form.Label>
+              <Form.Control
+                type="file"
+                name="file"
+                onChange={(e) => setimgfile(e)}
+                hidden
+                id="mypicture"
+              />
+            </Form.Group>
+            <button
+              className="btn btn-primary"
+              variant="primary"
+              type="submit"
+              onClick={addData}
+            >
+              <i class="fas fa-plus mr-2"></i>Lưu sản phẩm
+            </button>
+          </Form.Group>
+        </Form>
+      </div>
+
     </>
   );
 };

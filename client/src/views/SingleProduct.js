@@ -66,7 +66,7 @@ const SingleProduct = () => {
     document.execCommand('copy');
     textField.remove();
   };
-  const closeModal = () => {};
+  const closeModal = () => { };
 
   const handleAddToCart = () => {
     addToCart({
@@ -183,16 +183,21 @@ const SingleProduct = () => {
                       id=""
                     />
                   </div>
-                  <div className="d-flex align-items-center gap-30 ms-5">
-                    <button
-                      className="button border-0"
-                      data-bs-toggle="modal"
-                      data-bs-target="#staticBackdrop"
-                      type="button"
-                    >
-                      Thêm Vào Giỏ Hàng
-                    </button>
-                    <button className="button signup">Mua Ngay</button>
+                  <div>
+                    {/* Nội dung khác */}
+                    {available == 'Còn Hàng' && (
+                      <div className="d-flex align-items-center gap-30 ms-5">
+                        <button
+                          className="button border-0"
+                          data-bs-toggle="modal"
+                          data-bs-target="#staticBackdrop"
+                          type="button"
+                        >
+                          Thêm Vào Giỏ Hàng
+                        </button>
+                        <button className="button signup">Mua Ngay</button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-15">

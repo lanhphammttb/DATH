@@ -8,7 +8,6 @@ const unidecode = require('unidecode');
 const fs = require('fs');
 const app = express();
 const currencyFormatter = require('currency-formatter');
-const vnpayRouter = require('./routes/vnpay');
 
 app.use(cors());
 const crypto = require('crypto');
@@ -39,11 +38,10 @@ connection.connect((err) => {
   console.log('Connected to MySQL database!');
 });
 
-app.use('/api/vnpay', vnpayRouter);
 
 app.get('/api/users', (req, res) => {
   const userr = fs.readFileSync('data.txt', 'utf-8');
-  console.log(userr + "j");
+  // console.log(userr + "j");
   connection.query(
     `SELECT MAKH FROM khachhang WHERE TAIKHOAN = ? `,
     [userr],
@@ -324,14 +322,14 @@ app.get('/api/khachhang/:id', (req, res) => {
 });
 
 app.get('/api/hoadon', (req, res) => {
-  const sql = `SELECT MaHD,hd.MaKH as MaKH,NgayLapHD,KhuyenMai,TongTien,TinhTrang,GhiChu,khachhang.TENKH as TenKH,khachhang.SDT as SDT
+  const sql = `SELECT MaHD,hd.MaKH as MaKH,NgayLapHD,KhuyenMai,TongTien,TinhTrang,GhiChu,hd.TenNguoiNhan as TenKH,hd.SDTNguoiNhan as SDT,hd.DiaChiNhanHang as DiaChi
   from hoadon as hd
   left join khachhang on hd.MaKH = khachhang.MAKH
   order by NgayLapHD desc
   `;
   connection.query(sql, (error, results, fields) => {
     if (error) {
-      res.status(500).json({ error: err });
+      res.status(500).json({ error: error });
     } else {
       const updatedResults = results.map((result) => {
         const formattedDateTime = format(
@@ -376,7 +374,7 @@ app.post('/api/hoadon', (req, res) => {
         res.sendStatus(500);
       } else {
         const maHoaDon = results.insertId;
-        console.log('Thêm hóa đơn thành công', maHoaDon);
+        // console.log('Thêm hóa đơn thành công', maHoaDon);
         res.status(201).json({ mahd: maHoaDon });
       }
     }
@@ -510,11 +508,11 @@ app.put('/api/updatebill/:id', (req, res) => {
   })
 })
 
-app.post('/api/historybill', (req, res) => {
-  const MaKH = req.body;
+app.post('/api/historybill/:id', (req, res) => {
+  const MaKH = req.params.id;
   const sql = `select * from hoadon where MaKH = ?
   order by NgayLapHD desc`;
-  connection.query(sql, [MaKH], (err, results) => {
+  connection.query(sql, MaKH, (err, results) => {
     if (err) {
       console.error(err);
     }
@@ -587,7 +585,7 @@ app.post('/api/chitiethoadon', (req, res) => {
         console.error('MySQL error:', error);
         res.sendStatus(500);
       } else {
-        console.log('Thêm chi tiết hóa đơn thành công');
+        // console.log('Thêm chi tiết hóa đơn thành công');
         res.sendStatus(200);
       }
     }

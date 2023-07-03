@@ -11,7 +11,7 @@ const BillDone = () => {
             .get('/api/hoadon')
             .then((response) => {
                 setData(response.data);
-                console.log(response.data);
+                // console.log(response.data);
             })
             .catch((error) => {
                 console.error(error);

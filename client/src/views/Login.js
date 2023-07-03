@@ -26,12 +26,15 @@ const Login = () => {
         localStorage.setItem('user', JSON.stringify(user));
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         if (
-          response.data.chucvu === 'Admin' ||
-          response.data.chucvu === 'Nhân viên'
+          response.data.chucvu === 'Admin'
         ) {
           window.location.href = '/admin'; // Chuyển hướng sang trang dashboard sau khi đăng nhập thành công
           // isAdmin = true;
-        } else {
+        }
+        else if (response.data.chucvu === 'Nhân viên') {
+          window.location.href = '/admin/list-bill';
+        }
+        else {
           window.location.href = '/';
           // isAdmin = false;
         }

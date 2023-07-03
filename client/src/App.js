@@ -38,6 +38,7 @@ import Done from './components/Purchase History/Done';
 import Delivering from './components/Admin/Bill/Delivering';
 import BillDone from './components/Admin/Bill/Done';
 import BillCanceled from './components/Admin/Bill/BillCanceled';
+import NotFound from './views/Notfound';
 function App() {
   // const u = JSON.parse(localStorage.getItem('user'));
 

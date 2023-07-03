@@ -8,7 +8,7 @@ const Confirm = () => {
   const [cthd, setCthd] = useState([]);
   useEffect(() => {
     axios
-      .post('/api/historybill', { MaKH })
+      .post(`/api/historybill/${MaKH}`)
       .then((response) => {
         setData(response.data);
         console.log(response.data);

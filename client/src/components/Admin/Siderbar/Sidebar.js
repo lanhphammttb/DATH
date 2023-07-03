@@ -23,10 +23,10 @@ const Sidebar = (props) => {
   return (
     <>
       <aside class="main-sidebar sidebar-dark-primary elevation-4">
-        <Link to="/" class="brand-link">
+        <a href="/" class="brand-link">
           {/* <img src="" alt="Vinh Quang" class="brand-image img-circle elevation-3" style="opacity: .8"></img> */}
           <span class="brand-text font-weight-light">Vinh Quang</span>
-        </Link>
+        </a>
 
         <div class="sidebar">
           <div class="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -82,26 +82,30 @@ const Sidebar = (props) => {
                 </ul>
               </li>
               <li class="nav-item">
-                <Link to="#" class="nav-link">
-                  <i class="nav-icon fas fa-table"></i>
-                  <p>
-                    Quản lý sản phẩm<i class="fas fa-angle-left right"></i>
-                  </p>
-                </Link>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <Link to="/admin/list-product" class="nav-link">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Danh sách sản phẩm</p>
+                {localStorage.getItem('chucvu') === 'Admin' && (
+                  <>
+                    <Link to="#" class="nav-link">
+                      <i class="nav-icon fas fa-table"></i>
+                      <p>
+                        Quản lý sản phẩm<i class="fas fa-angle-left right"></i>
+                      </p>
                     </Link>
-                  </li>
-                  <li class="nav-item">
-                    <Link to="/admin/list-type-product" class="nav-link">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Danh sách loại sản phẩm</p>
-                    </Link>
-                  </li>
-                </ul>
+                    <ul className="nav nav-treeview">
+                      <li className="nav-item">
+                        <Link to="/admin/list-product" class="nav-link">
+                          <i className="far fa-circle nav-icon"></i>
+                          <p>Danh sách sản phẩm</p>
+                        </Link>
+                      </li>
+                      <li class="nav-item">
+                        <Link to="/admin/list-type-product" class="nav-link">
+                          <i class="far fa-circle nav-icon"></i>
+                          <p>Danh sách loại sản phẩm</p>
+                        </Link>
+                      </li>
+                    </ul>
+                  </>
+                )}
               </li>
               <li class="nav-item">
                 <Link to="#" class="nav-link">
