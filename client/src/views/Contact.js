@@ -1,20 +1,20 @@
-import React from "react";
-import BreadCrumb from "../components/BreadCrumb";
-import Meta from "../components/Meta";
-import { AiOutlineHome, AiOutlineMail } from "react-icons/ai";
-import { BiPhoneCall, BiInfoCircle } from "react-icons/bi";
-import Container from "../components/Container";
+import React from 'react';
+import BreadCrumb from '../components/BreadCrumb';
+import Meta from '../components/Meta';
+import { AiOutlineHome, AiOutlineMail } from 'react-icons/ai';
+import { BiPhoneCall, BiInfoCircle } from 'react-icons/bi';
+import Container from '../components/Container';
 
 const Contact = () => {
   return (
     <>
-      <Meta title={"Contact Us"} />
+      <Meta title={'Contact Us'} />
       <BreadCrumb title="Contact Us" />
       <Container class1="contact-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6986.771103663534!2d76.99275607711007!3d28.886888929272477!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390da5e51463d4c9%3A0xe5a485e2ac7c3d4a!2sMandaura%2C%20Haryana%20131103!5e0!3m2!1sen!2sin!4v1669909087902!5m2!1sen!2sin"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9184.558670333161!2d105.8358212232308!3d21.00436099384304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac773026b415%3A0x499b8b613889f78a!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBYw6J5IEThu7FuZyBIw6AgTuG7mWkgLSBIVUNF!5e0!3m2!1svi!2s!4v1688543043478!5m2!1svi!2s"
               width="600"
               height="450"
               className="border-0 w-100"
