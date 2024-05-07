@@ -16,9 +16,7 @@ const secretKey = 'yoursecretkey';
 
 // Example function to encrypt password
 
-
 // Example function to decrypt password
-
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,7 +35,6 @@ connection.connect((err) => {
   if (err) throw err;
   console.log('Connected to MySQL database!');
 });
-
 
 app.get('/api/users', (req, res) => {
   const userr = fs.readFileSync('data.txt', 'utf-8');
@@ -148,10 +145,10 @@ app.get('/api/sanpham', (req, res) => {
     // Lọc danh sách sản phẩm dựa trên searchTerm
     const filteredProducts = searchTerm
       ? updatedResults.filter((product) =>
-        unidecode(product.TenSP.toLowerCase()).includes(
-          unidecode(searchTerm.toLowerCase())
+          unidecode(product.TenSP.toLowerCase()).includes(
+            unidecode(searchTerm.toLowerCase())
+          )
         )
-      )
       : updatedResults;
     // Trả về danh sách sản phẩm dưới dạng JSON
     res.json(filteredProducts);
@@ -505,8 +502,8 @@ app.put('/api/updatebill/:id', (req, res) => {
   WHERE chitiethoadon.MaHD = ?`;
   connection.query(sql, MaHD, (err, results) => {
     if (err) console.error(err);
-  })
-})
+  });
+});
 
 app.post('/api/historybill/:id', (req, res) => {
   const MaKH = req.params.id;
@@ -515,8 +512,7 @@ app.post('/api/historybill/:id', (req, res) => {
   connection.query(sql, MaKH, (err, results) => {
     if (err) {
       console.error(err);
-    }
-    else {
+    } else {
       const updatedResult = results.map((result) => {
         const formattedDateTime = format(
           new Date(result.NgayLapHD),
@@ -534,9 +530,8 @@ app.post('/api/historybill/:id', (req, res) => {
       });
       res.json(moneyy);
     }
-  })
-})
-
+  });
+});
 
 app.post('/api/signup', (req, res) => {
   const { user, phone, address, name } = req.body;
@@ -630,9 +625,6 @@ app.put('/api/done/:id', (req, res) => {
     }
   });
 });
-
-
-
 
 // app.get('/api/history', (req, res) => {
 //   const { MaKH } = req.body;
